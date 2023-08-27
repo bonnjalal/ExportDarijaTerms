@@ -2,9 +2,14 @@
 import pywikibot
 import requests
 import json
+from regexTest import myreg
 
 
 site = pywikibot.Site("en", "wiktionary")
+#From
+#===Pronunciation===
+Pronunciation = ["{{IPA|en|/stɔːm/}}"]
+EtymologyKeyWords = []
 #user = pywikibot.User(site, "Bonnjalal00")
 def getSecInfo(secDict, line):
     for x in secDict["parse"]["sections"]:
@@ -72,9 +77,13 @@ def main (catName = "Moroccan Arabic language"):
         catList = list(cat.subcategories())
         for category in catList:
             name = extractCatName(category.title())
-            #main(name)
+            main(name)
 
 main()
+
+
+# myreg()
+
 
 
 
