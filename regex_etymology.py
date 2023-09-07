@@ -31,6 +31,7 @@ class myreg:
         types = ["inh", "bor", "der"]
         fromDic = {}
         items = {}
+
         i = 1
         for t in types:
         
