@@ -87,39 +87,89 @@ class myreg:
         return line
  
     def getNoun(self, txt):
-        nounDic = {}
+        sectionDic = {}
         items = {}
         
         # text = '''_YES_ '''
 
         lines = txt.splitlines()
+        
 
         # isline = False
         i = 0
 
         meaning = ""
         examplesList = []
+        countExamples = 0
 
-        for l in lines:
+        hashtag1 = ""
+        hashtag2 = ""
+   
+        hashtagCount = 0
+
+
+        for x in range(len(lines)):
+            l = lines[x]
+
             if l.startswith('# '):
-                if i>0 :
-                    items.update({i:{"meaning": meaning, "examples":examplesList}})
+                # count1Hashtag += 1 
+                if len(items)<i :
+                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                    examplesList = []
+                    meaning = ""
+
 
                 line = self.getPlainLine(l)
+                hashtag1 = line
                 meaning = line
                 i+=1
+                hashtagCount = 1
                 # text += "\n" + line
-            elif  l.startswith('#:'):
+            elif l.startswith('## '):
+                if len(items)<i and hashtagCount != 1:
+                    # if hashtagCount == 1:
+
+                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                    examplesList = []
+                    meaning = hashtag1
+
+                    # print("itemsCount = " + str(len(items)) + " | i = " + str(i))
+                
+                line = self.getPlainLine(l)
+                hashtag2 = hashtag1 + line
+                meaning += " " + line
+                i+=1
+
+                isStartLine = False
+                hashtagCount = 2
+            elif l.startswith('### '):
+                # if len(items)<i :
+                if hashtagCount != 2:
+                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                    examplesList = []
+                    meaning = hashtag2
+
+                line = self.getPlainLine(l)
+                meaning += " " + line
+                i+=1
+                hashtagCount = 3
+            elif  l.startswith('#:') or l.startswith('##:') or l.startswith('###:'):
+                countExamples += 1
                 line = self.getPlainLine(l)
                 examplesList.append(line)
-                # text += "\n" + line
 
-        nounDic.update({"Noun": items})
+        if  len(items)<i :
+            # items.update({i:{"meaning": meaning, "examples":examplesList}})
+            items.update({i:{"meaning":meaning, "examples":examplesList }})
+            examplesList = []
+            meaning = ""
+            
+        
+        sectionDic.update({"Verb": items})
  
         # fromDic.update({"Etymology": items})
         
-        return nounDic
-
+        return sectionDic
 
 
 
