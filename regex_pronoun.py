@@ -21,7 +21,7 @@ class myreg:
 
     def extractVerb(self, wikiText):
     
-        itemFrom = self.getAdjective(wikiText)
+        itemFrom = self.getPronoun(wikiText)
 
         return itemFrom
 
@@ -88,7 +88,7 @@ class myreg:
 
    
 
-    def getAdjective(self, txt):
+    def getPronoun(self, txt):
         sectionDic = {}
         items = {}
         
@@ -167,9 +167,9 @@ class myreg:
             items.update({len(items)+1:{"meaning":meaning, "examples":examplesList }})
             examplesList = []
             meaning = ""
+            
         
-        
-        sectionDic.update({"Adjective": items})
+        sectionDic.update({"Pronoun": items})
  
         # fromDic.update({"Etymology": items})
         

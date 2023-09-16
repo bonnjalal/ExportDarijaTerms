@@ -111,10 +111,12 @@ class myreg:
         for x in range(len(lines)):
             l = lines[x]
 
+            itemLen = len(items)
+
             if l.startswith('# '):
                 # count1Hashtag += 1 
-                if len(items)<i :
-                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                if itemLen<i :
+                    items.update({itemLen+1:{"meaning":meaning, "examples":examplesList }})
                     examplesList = []
                     meaning = ""
 
@@ -126,10 +128,10 @@ class myreg:
                 hashtagCount = 1
                 # text += "\n" + line
             elif l.startswith('## '):
-                if len(items)<i and hashtagCount != 1:
+                if itemLen<i and hashtagCount != 1:
                     # if hashtagCount == 1:
 
-                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                    items.update({itemLen+1:{"meaning":meaning, "examples":examplesList }})
                     examplesList = []
                     meaning = hashtag1
 
@@ -140,12 +142,12 @@ class myreg:
                 meaning += " " + line
                 i+=1
 
-                isStartLine = False
+                # isStartLine = False
                 hashtagCount = 2
             elif l.startswith('### '):
                 # if len(items)<i :
                 if hashtagCount != 2:
-                    items.update({i:{"meaning":meaning, "examples":examplesList }})
+                    items.update({itemLen+1:{"meaning":meaning, "examples":examplesList }})
                     examplesList = []
                     meaning = hashtag2
 
@@ -160,12 +162,12 @@ class myreg:
 
         if  len(items)<i :
             # items.update({i:{"meaning": meaning, "examples":examplesList}})
-            items.update({i:{"meaning":meaning, "examples":examplesList }})
+            items.update({len(items)+1:{"meaning":meaning, "examples":examplesList }})
             examplesList = []
             meaning = ""
             
         
-        sectionDic.update({"Verb": items})
+        sectionDic.update({"Noun": items})
  
         # fromDic.update({"Etymology": items})
         
