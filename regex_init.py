@@ -2,7 +2,7 @@ import re
 
 class ReHelper:
     
-    def reFindFirst(self, pattern, string, bakPattern=None):
+    def reFindFirst(self, pattern, string, bakPattern=None, default=''):
         try:
             return re.findall(pattern, string)[0]
         except :
@@ -10,11 +10,11 @@ class ReHelper:
                 try:
                     return re.findall(bakPattern, string)[0] 
                 except :
-                    return ""
+                    return default
             else:
-                return ""
+                return default
 
-    def reFindAll(self, pattern, string, bakPattern=None):
+    def reFindAll(self, pattern, string, bakPattern=None, default=[]):
         try:
             return re.findall(pattern, string)
         except :
@@ -22,9 +22,9 @@ class ReHelper:
                 try:
                     return re.findall(bakPattern, string)    
                 except :
-                    return []
+                    return default
             else:
-                return []
+                return default
 
     def finditer_with_line_numbers(self, pattern, string, flags=0):
         '''
@@ -60,4 +60,5 @@ class ReHelper:
 
         return matcheslist
 
-
+    
+    

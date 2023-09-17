@@ -1,14 +1,14 @@
 import re
 from regex_init import ReHelper
-import pprint
+# import pprint
 
 
 reH = ReHelper()
 
-lng = "en"
+lng = "ary"
 
 
-class myreg:
+class NounReg:
   # def __init__(self):
     # self.name = name
     # self.age = age
@@ -167,7 +167,7 @@ class myreg:
             meaning = ""
             
         
-        sectionDic.update({"Noun": items})
+        sectionDic.update(items)
  
         # fromDic.update({"Etymology": items})
         
@@ -312,7 +312,7 @@ text = r"""
 {{see translation subpage|Noun}}
 
 """
-myregl = myreg()
-getNoun = myregl.extractNoun(text)
-
-pprint.pprint(getNoun)
+# myregl = myreg()
+# getNoun = myregl.extractNoun(text)
+#
+# pprint.pprint(getNoun)

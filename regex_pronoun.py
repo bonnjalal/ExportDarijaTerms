@@ -1,14 +1,14 @@
 import re
 from regex_init import ReHelper
-import pprint
+# import pprint
 
 
 reH = ReHelper()
 
-lng = "en"
+lng = "ary"
 
 
-class myreg:
+class PronounReg:
   # def __init__(self):
     # self.name = name
     # self.age = age
@@ -169,7 +169,7 @@ class myreg:
             meaning = ""
             
         
-        sectionDic.update({"Pronoun": items})
+        sectionDic.update(items)
  
         # fromDic.update({"Etymology": items})
         
@@ -980,7 +980,7 @@ In informal (often jocular) contexts, ''[[best]]'' may be inflected further and 
 {{trans-bottom}}
 
 """
-myregl = myreg()
-getNoun = myregl.extractVerb(text)
-
-print(getNoun)
+# myregl = myreg()
+# getNoun = myregl.extractVerb(text)
+#
+# print(getNoun)

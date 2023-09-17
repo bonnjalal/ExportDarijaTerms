@@ -2,14 +2,14 @@
 import pywikibot
 import requests
 import json
-from regexTest import myreg
+from extract_init import ExtractHelper
 
+
+
+extH = ExtractHelper()
 
 site = pywikibot.Site("en", "wiktionary")
-#From
-#===Pronunciation===
-Pronunciation = ["{{IPA|en|/stɔːm/}}"]
-EtymologyKeyWords = []
+
 #user = pywikibot.User(site, "Bonnjalal00")
 def getSecInfo(secDict, line):
     for x in secDict["parse"]["sections"]:
@@ -43,6 +43,7 @@ def isArticle(page):
 
 
 def getArticlesData(pagesList):
+    sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms"]
     for page in pagesList:
         title = page.title()
         if isArticle(page):
@@ -51,13 +52,48 @@ def getArticlesData(pagesList):
             sectionsDict = sectionsJson.json()
             secIndex, secNum = getSecInfo(sectionsDict,"Moroccan Arabic") 
             allSections = getAllSect(sectionsDict, secNum)
+            # print("secIndex " + secIndex + " / secNumber " + secNum)
 
+            sectionDic = {}
+            
+            depth2title = ""
+            depth3title = ""
+            depth4title = ""
             for num, index in allSections.items():
-                print(num,index)
+                # print(num,index)
                 selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
                 sectionText = selectedSectJson.json()
-                print(sectionText["parse"]["wikitext"])
-                print(num.count("."))
+                secTxt = sectionText["parse"]["wikitext"]["*"]
+                secTitle = secTxt.splitlines()[0].replace('=', '')
+                secDepth = len(num.strip().replace('.', ''))
+                
+                # print(secTitle)
+                # print(secTxt)
+                
+                # depth5title = ""
+                for sectName in sectNames:
+                    if sectName in secTitle:
+                        sectDic = extH.getSectContent(sectName, secTxt)
+                        if secDepth == 2:
+                            depth2title = secTitle
+                            sectionDic[secTitle] = sectDic
+                        elif secDepth == 3: 
+                            depth3title = secTitle
+                            sectionDic[depth2title][secTitle] = sectDic
+                        elif secDepth == 4:
+                            depth4title = secTitle
+                            sectionDic[depth2title][depth3title][secTitle] = sectDic
+                        elif secDepth == 5:
+                            sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+                        break
+            
+            print(sectionDic)
+
+            
+
+
+                # print(secTitle)
+                # print(num.count("."))
 
 
 def extractCatName(cat):

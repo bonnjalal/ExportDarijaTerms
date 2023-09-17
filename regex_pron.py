@@ -3,8 +3,8 @@ import re
 from regex_init import ReHelper
 
 reH = ReHelper()
-lng = "en"
-class PronReg:
+lng = "ary"
+class PronuncReg:
   # def __init__(self):
     # self.name = name
     # self.age = age
@@ -28,7 +28,7 @@ class PronReg:
     pronDict.update(audios)
     pronDict.update(rhymesDic)
 
-    pronunciationDic = {"Pronunciation": pronDict}
+    pronunciationDic = pronDict
 
     # print(pronunciationDic)
 
@@ -48,7 +48,7 @@ class PronReg:
   def getPron(self, txt):
     # i = 0
     
-    pronPattern = r'(?<={{IPA\|en\|)(.*?)(?=}})'
+    pronPattern = r'(?<={{IPA\|'+lng+r'\|)(.*?)(?=}})'
     accentPattern = r'{{a\|(.*?)}}'
     # pattern = '{{IPA\|en\|(.*?)}}' 
     # accent = re.findall(r'{{a\|(.*?)}}', txt) 
@@ -56,11 +56,11 @@ class PronReg:
     matchList = reH.finditer_with_line_numbers(pronPattern, txt)
     if len(matchList) <=0:
         return {}
-    pronDic = {}
+    pronDic = {"pron_text":{}}
     items = {}
     for i in range(len(matchList)):
-       accent = re.findall(accentPattern, matchList[i][2])
-       item = {accent[0]: matchList[i][0]}
+       accent = reH.reFindFirst(accentPattern, matchList[i][2], default=lng)
+       item = {accent: matchList[i][0]}
        items.update(item)
 
     pronDic.update({"pron_text":items})
@@ -77,10 +77,13 @@ class PronReg:
         lngPattern = r'(?<=.'+t+r'\|)(.*?)(?=}})'
  
         matchList = reH.finditer_with_line_numbers(audioPattern, txt)
+        # print(matchList)
         if len(matchList) > 0:
             for i in range(len(matchList)):
-                audioLng = re.findall(lngPattern, matchList[i][2])
-                item = {audioLng[0]: matchList[i][0] + '.' + t}
+                # audioLng = re.findall(lngPattern, matchList[i][2])
+                # item = {audioLng[0]: matchList[i][0] + '.' + t}
+                item = {lng: matchList[i][0] + '.' + t}
+                # print("audio" + str(item))
                 items.update(item)
 
             audiosDic.update({"Audio":items})
@@ -107,7 +110,7 @@ class PronReg:
           # audiosDic.update({"item {}".format(i): item})
           i+=1
           #newAudio.append(a+'.'+t)
-        audiosDic.update({"Audio": items})
+        audiosDic.update(items)
         # print(audiosDic)
         #audios += newAudio
     return audiosDic
@@ -122,6 +125,6 @@ text = '''* {{a|RP}} {{IPA|en|/stɔːm/}}
   * {{audio|en|En-us-storm.wav|Audio (US)}}
   '''
 
-myreg = PronReg()
-result = myreg.extractPronunciation(text)
-print(result)
+# myreg = PronReg()
+# result = myreg.extractPronunciation(text)
+# print(result)

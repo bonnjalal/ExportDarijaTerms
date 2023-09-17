@@ -1,13 +1,13 @@
-import re
+# import re
 from regex_init import ReHelper
 
 
 reH = ReHelper()
 
-lng = "en"
+lng = "ary"
 
 
-class myreg:
+class EtyReg:
   # def __init__(self):
     # self.name = name
     # self.age = age
@@ -63,7 +63,7 @@ class myreg:
                     item = {t + " From "+ str(i): {fromLng: fromWord, "translation": translation, "transliteration": transliteration}}
                     items.update(item)
                     i +=1
-        fromDic.update({"Etymology": items})
+        fromDic.update(items)
 
         return fromDic
 
@@ -84,7 +84,7 @@ text = '''===Etymology===
     From {{inh|en|enm|storm|t=disturbed state of the atmosphere; heavy precipitation; battle, conflict; attack}}{{nb...|starme, steorm, storem, storme, stourme, strom|otherforms=1}},<ref>{{R:MED Online|pos=n|id=MED43115}}</ref> from {{der|en|ang|storm|t=tempest, storm; attack; storm of arrows; disquiet, disturbance, tumult, uproar; onrush, rush}}{{nb...|steorm, (Northern England) stearm|otherforms=1}}, from {{inh|en|gmw-pro|*sturm|t=storm}}, from {{der|en|gem-pro|*sturmaz|t=storm}}, from {{der|en|ine-pro|*(s)twerH-|t=to agitate, stir up; to propel; to urge on}}.<ref name="OED">Compare {{R:OED Online|pos=n|date=July 2023|nodot=1}}; {{R:Lexico|pos=n}}</ref> Related to {{m|en|stir}}.
     '''
 
-myregl = myreg()
-getFrom = myregl.extractFrom(text)
-
-print(getFrom)
+# myregl = myreg()
+# getFrom = myregl.extractFrom(text)
+#
+# print(getFrom)
