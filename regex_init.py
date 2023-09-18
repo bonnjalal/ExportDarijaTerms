@@ -1,5 +1,7 @@
 import re
 
+
+lng = "ary"
 class ReHelper:
     
     def reFindFirst(self, pattern, string, bakPattern=None, default=''):
@@ -98,4 +100,165 @@ class ReHelper:
 
         return line
     
-    
+    def getAntonyms(self, line):
+        l = line
+      
+        if "{{ant|" in l:
+            syn = "ant: "
+            line = re.sub(r'[^\u0600-\u06FF\|]', '',l)
+            line = line.replace('|', ' ')
+            line = line.strip()
+            # print(line)
+            sList = list(line.split(" "))
+            for s in sList:
+                if s != "" and s != " " and s != "  " and s != "   " and s != "    ":
+                    syn += s + ", "
+            # print(syn)
+            return syn
+
+        return line
+
+    def removeBlacklist(self, line):
+        l = line
+
+        prefix = "prefix"
+        suffix = "suffix"
+
+        blacklist = {
+            1:{prefix:"{{senseid",suffix:"}}"},
+            2:{prefix:"{{top",suffix:"}}"},
+        }
+        
+        for value in blacklist.values():
+            pref = value["prefix"]
+            suff = value["suffix"]
+            pattern = r'(?<='+pref+r')(.*?)(?='+suff+r')'
+            matches = self.reFindAll(pattern, l)
+
+            for m in matches:
+                l = l.replace(pref+m+suff, '')
+
+        return l
+            
+ 
+    # Clean wikiText template
+    def cleanTemplate(self, line):
+        l = line
+
+        prefix = "prefix"
+        suffix = "suffix"
+        bkpSuffix = "bkpSuff"
+        wrapin = "wrapin"
+
+        cleanlist = {
+            1:{prefix:'{{tlb|'+lng+'|',suffix:"}}", bkpSuffix:None, wrapin:"()"},
+            2:{prefix:'{{uxi|'+lng+'|',suffix:"|", bkpSuffix:"}}", wrapin:" "},
+            3:{prefix:'{{non-gloss',suffix:"|", bkpSuffix:None, wrapin: "()"},
+        }
+        
+        for value in cleanlist.values():
+            pref = value["prefix"]
+            suff = value["suffix"]
+            bkpSuff = value[bkpSuffix]
+            wrap = value[wrapin]
+            
+            pattern = re.escape(pref)+r'(.*?)'+re.escape(suff)
+
+            patternBkp = None
+            if bkpSuff != None:
+                patternBkp = re.escape(pref)+r'(.*?)'+re.escape(bkpSuff)
+            # print(pattern)
+            matches = self.reFindAll(pattern, l, patternBkp)
+            # print(matches)
+
+            for m in matches:
+                m1 = m.replace('|', ',')
+                if bkpSuff != None:
+                    if wrap == "()":
+                        l = re.sub(patternBkp, " (" +m1+ ") ", l)
+                        # l = l.replace(pref+m+suff+bkpSuff, " (" + m1 + ") ")
+                    else:
+                        l = re.sub(patternBkp, " " +m1+ " ", l)
+                        # l = l.replace(pref+m+suff+bkpSuff, " " + m1 + " ")
+                else:
+                    if wrap == "()":
+                        l = re.sub(pattern, " (" +m1+ ") ", l)
+                        # l = l.replace(pref+m+suff, ' (' + m1 + ') ')
+                    else:
+                        l = re.sub(pattern, " " +m1+ " ", l)
+                        # l = l.replace(pref+m+suff, ' ' + m1 + ' ')
+
+        return l    
+
+    def getPlainLine(self, l):
+        line = l
+        line = self.getSynonyms(line)
+        line = self.getAntonyms(line)
+        line = self.removeBlacklist(line)
+        line = self.cleanTemplate(line)
+        
+        lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
+        ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
+        # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
+
+        lbMatchList = self.reFindAll(lbPatt, l)
+        uxMatch = self.reFindFirst(ux1Patt, l)
+        uxMatch2 = self.reFindFirst(ux2Patt, l)
+        # glossMatchList = reH.reFindAll(glossPatt, l)
+        
+        # print(line)
+
+        if len(lbMatchList) != 0:
+            for m in lbMatchList:
+                match = m
+                match = match.replace('|', ', ')
+                line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
+        
+        if uxMatch != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
+        elif uxMatch2 != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)
+        
+        # if len(glossMatchList) != 0:
+        #     # print(uxMatchList)
+        #     for m in glossMatchList:
+        #         match = m
+        #         line = line.replace('{{gloss|'+ m +'}}', match)
+
+
+        linkPatt = r"\[\[(.*?)\]\]"
+
+        linkList = re.findall(linkPatt, line)
+        for link in linkList:
+            # print(link)
+            if "|" in link:
+                # print("true")
+                findOr = self.reFindFirst(r"^.*?\|", link)
+                # print(findOr)
+                line = line.replace("[[" +findOr, "")
+            else:
+                line = line.replace("[[" + link + "]]", link)
+
+        # newPattr = re.compile(r"\[\[(.*?)|")
+        
+        # line = re.sub(r'\[^\]\}]/g', '', line)
+        # line = line.replace(']', '')
+        # line = line.replace("{{ux|"+lng+"|", "")
+        line = line.replace("'''", "")
+        line = line.replace("''", "")
+        line = line.replace("{{q|", "")
+        line = line.replace("{{gloss|", "")
+        line = line.replace("{{m|"+lng+"|", "")
+        # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
+        # print("AFTER: "+line)
+
+        return line
+
+
+# line = "#: {{uxi|ary|ولد خاها|tr=wuld ḵāha|t=her fraternal nephew}}"
+# reH = ReHelper()
+#
+# txt = reH.cleanTemplate(line)
+# print(txt)

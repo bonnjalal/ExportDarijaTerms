@@ -44,68 +44,68 @@ class NounReg:
 
         return adjList
 
-    def getPlainLine(self, l):
-        line = l
-        line = reH.getSynonyms(line) 
-        
-        lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
-        ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
-        ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
-        # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
-
-        lbMatchList = reH.reFindAll(lbPatt, l)
-        uxMatch = reH.reFindFirst(ux1Patt, l)
-        uxMatch2 = reH.reFindFirst(ux2Patt, l)
-        # glossMatchList = reH.reFindAll(glossPatt, l)
-        
-        # print(line)
-
-        if len(lbMatchList) != 0:
-            for m in lbMatchList:
-                match = m
-                match = match.replace('|', ', ')
-                line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
-        
-        if uxMatch != "":
-            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
-        elif uxMatch2 != "":
-            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)
-        
-        # if len(glossMatchList) != 0:
-        #     # print(uxMatchList)
-        #     for m in glossMatchList:
-        #         match = m
-        #         line = line.replace('{{gloss|'+ m +'}}', match)
-
-
-        linkPatt = r"\[\[(.*?)\]\]"
-
-        linkList = re.findall(linkPatt, line)
-        for link in linkList:
-            # print(link)
-            if "|" in link:
-                # print("true")
-                findOr = reH.reFindFirst(r"^.*?\|", link)
-                # print(findOr)
-                line = line.replace("[[" +findOr, "")
-            else:
-                line = line.replace("[[" + link + "]]", link)
-
-        # newPattr = re.compile(r"\[\[(.*?)|")
-        
-        # line = re.sub(r'\[^\]\}]/g', '', line)
-        # line = line.replace(']', '')
-        # line = line.replace("{{ux|"+lng+"|", "")
-        line = line.replace("'''", "")
-        line = line.replace("''", "")
-        line = line.replace("{{q|", "")
-        line = line.replace("{{gloss|", "")
-        line = line.replace("{{m|"+lng+"|", "")
-        # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
-        line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
-        # print("AFTER: "+line)
-
-        return line
+    # def getPlainLine(self, l):
+    #     line = l
+    #     line = reH.getSynonyms(line) 
+    #     
+    #     lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
+    #     ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+    #     ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
+    #     # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
+    #
+    #     lbMatchList = reH.reFindAll(lbPatt, l)
+    #     uxMatch = reH.reFindFirst(ux1Patt, l)
+    #     uxMatch2 = reH.reFindFirst(ux2Patt, l)
+    #     # glossMatchList = reH.reFindAll(glossPatt, l)
+    #     
+    #     # print(line)
+    #
+    #     if len(lbMatchList) != 0:
+    #         for m in lbMatchList:
+    #             match = m
+    #             match = match.replace('|', ', ')
+    #             line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
+    #     
+    #     if uxMatch != "":
+    #         line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
+    #     elif uxMatch2 != "":
+    #         line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)
+    #     
+    #     # if len(glossMatchList) != 0:
+    #     #     # print(uxMatchList)
+    #     #     for m in glossMatchList:
+    #     #         match = m
+    #     #         line = line.replace('{{gloss|'+ m +'}}', match)
+    #
+    #
+    #     linkPatt = r"\[\[(.*?)\]\]"
+    #
+    #     linkList = re.findall(linkPatt, line)
+    #     for link in linkList:
+    #         # print(link)
+    #         if "|" in link:
+    #             # print("true")
+    #             findOr = reH.reFindFirst(r"^.*?\|", link)
+    #             # print(findOr)
+    #             line = line.replace("[[" +findOr, "")
+    #         else:
+    #             line = line.replace("[[" + link + "]]", link)
+    #
+    #     # newPattr = re.compile(r"\[\[(.*?)|")
+    #     
+    #     # line = re.sub(r'\[^\]\}]/g', '', line)
+    #     # line = line.replace(']', '')
+    #     # line = line.replace("{{ux|"+lng+"|", "")
+    #     line = line.replace("'''", "")
+    #     line = line.replace("''", "")
+    #     line = line.replace("{{q|", "")
+    #     line = line.replace("{{gloss|", "")
+    #     line = line.replace("{{m|"+lng+"|", "")
+    #     # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+    #     line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
+    #     # print("AFTER: "+line)
+    #
+    #     return line
  
     def getNoun(self, txt):
         sectionDic = {}
@@ -145,7 +145,7 @@ class NounReg:
                     meaning = ""
 
 
-                line = self.getPlainLine(l)
+                line = reH.getPlainLine(l)
                 hashtag1 = line
                 meaning = line
                 i+=1
@@ -161,7 +161,7 @@ class NounReg:
 
                     # print("itemsCount = " + str(len(items)) + " | i = " + str(i))
                 
-                line = self.getPlainLine(l)
+                line = reH.getPlainLine(l)
                 hashtag2 = hashtag1 + line
                 meaning += " " + line
                 i+=1
@@ -175,13 +175,13 @@ class NounReg:
                     examplesList = []
                     meaning = hashtag2
 
-                line = self.getPlainLine(l)
+                line = reH.getPlainLine(l)
                 meaning += " " + line
                 i+=1
                 hashtagCount = 3
             elif  l.startswith('#:') or l.startswith('##:') or l.startswith('###:'):
                 countExamples += 1
-                line = self.getPlainLine(l)
+                line = reH.getPlainLine(l)
                 examplesList.append(line)
 
         if  len(items)<i :
