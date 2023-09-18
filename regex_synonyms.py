@@ -17,28 +17,30 @@ class SynReg:
         return itemFrom
     
     def getSynonyms(self, text):
-        items = {}
+        # items = {}
         
         lines = text.splitlines()
 
 
         lPatt = r'(?<={{l\|'+lng+r'\|)(.*?)(?=}})'
-        syn2Patt = r'(?<=\|)(.*?)(?=|)'
+        # synBkpPatt = r'(?<=\|)(.*?)(?=\|)'
+        # syn2Patt = r'(?<={{syn\|)(.*?)(?=\<)'
  
         syMatchList = []
         for l in lines:
             if r"{{l|" in l:
                 syMatchList += reH.reFindAll(lPatt, l)
-            elif r"{{syn|" in l:
-                sysList = reH.reFindAll(syn2Patt, l)
+            elif "{{syn|" in l:
+                line = re.sub(r'[^\u0600-\u06FF\|]', '',l)
+                line = line.replace('|', ' ')
 
-                newSynList = []
-                for syn in sysList:
-                    line = re.sub(r'[\u0621-\u064A]', '',syn)
-                    if (line != ''):
-                        newSynList.append(line)
-
-                syMatchList += newSynList
+                line = line.strip()
+                # print(line)
+                sList = list(line.split(" "))
+                for s in sList:
+                    if s != "" and s != " " and s != "  " and s != "   " and s != "    ":
+                        syMatchList.append(s)
+                # print(syMatchList)
 
                         
 
@@ -56,20 +58,17 @@ class SynReg:
        
         # syMatchList = reH.reFindAll(synPatt, text, synBkpPatt)
 
-        items.update(syMatchList)
+        # items.update(syMatchList)
+        
 
-        return items
+        return syMatchList
 
 
 
-txt = """
-====Synonyms====
-* {{l|en|adjectify}}
-* {{l|en|adjectivize}}
-
-"""
-
-# myregl = myreg()
-# getNoun = myregl.extractVerb(txt)
+# txt = """
+# #: {{syn|ary|ضر|tr1=ḍarr|جرح|tr2=jraḥ}}"""
+#
+# myregl = SynReg()
+# getNoun = myregl.getSynonyms(txt)
 #
 # print(getNoun)

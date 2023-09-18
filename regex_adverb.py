@@ -29,12 +29,16 @@ class AdvReg:
 
     def getPlainLine(self, l):
         line = l
+        line = reH.getSynonyms(line) 
+        
         lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
-        # uxPatt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
         # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
 
         lbMatchList = reH.reFindAll(lbPatt, l)
-        # uxMatchList = reH.reFindAll(uxPatt, l)
+        uxMatch = reH.reFindFirst(ux1Patt, l)
+        uxMatch2 = reH.reFindFirst(ux2Patt, l)
         # glossMatchList = reH.reFindAll(glossPatt, l)
         
         # print(line)
@@ -45,11 +49,15 @@ class AdvReg:
                 match = match.replace('|', ', ')
                 line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
         
-        # if len(uxMatchList) != 0:
-        #     # print(uxMatchList)
-        #     for m in uxMatchList:
-        #         match = m
-        #         line = line.replace('{{ux|'+lng+'|'+ m +'}}', match)
+        if uxMatch != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
+        elif uxMatch2 != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)
+
+            # print(uxMatchList)
+            # for m in uxMatchList:
+            #     line = line.replace('{{ux|'+lng+'|'+ m +'}}', match)
+            
         
         # if len(glossMatchList) != 0:
         #     # print(uxMatchList)
@@ -75,13 +83,14 @@ class AdvReg:
         
         # line = re.sub(r'\[^\]\}]/g', '', line)
         # line = line.replace(']', '')
-        line = line.replace("{{ux|"+lng+"|", "")
+        # line = line.replace("{{ux|"+lng+"|", "")
         line = line.replace("'''", "")
         line = line.replace("''", "")
         line = line.replace("{{q|", "")
         line = line.replace("{{gloss|", "")
         line = line.replace("{{m|"+lng+"|", "")
-        line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
         # print("AFTER: "+line)
 
         return line

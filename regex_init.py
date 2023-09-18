@@ -59,6 +59,43 @@ class ReHelper:
             matcheslist.update({m:mList})
 
         return matcheslist
+    
+    def getSynonyms(self, line):
+        l = line
+        # synPatt = r'(?<={{syn\|ary\|)(.*?)(?=\<)'
+        # syn2Patt = r'(?<=\|)(.*?)(?=\|)'
+        # # newSynList = ""
+        # if r"{{syn|" in line:
+        #     l = "syn: " + self.reFindFirst(synPatt, l) + ', '
+        #     if l != 'syn: ':
+        #         return l
+        #     sysList = self.reFindAll(syn2Patt, line)
+        #     # print(sysList)
+        #     l2 = "syn: "
+        #
+        #     for syn in sysList:
+        #         # print("syn: " + syn)
+        #         # r'[^؀-ۿ]'
+        #         s = re.sub(r'[\u0600-\u06FF]', '',syn)
+        #         print("syn:: " + s)
+        #         if (s != ''):
+        #             l2 += s + ", "
+        #     l =l2
 
+        # syn = ""
+        if "{{syn|" in l:
+            syn = r"syn: "
+            line = re.sub(r'[^\u0600-\u06FF\|]', '',l)
+            line = line.replace('|', ' ')
+            line = line.strip()
+            # print(line)
+            sList = list(line.split(" "))
+            for s in sList:
+                if s != "" and s != " " and s != "  " and s != "   " and s != "    ":
+                    syn += s + ", "
+            # print(syn)
+            return syn
+
+        return line
     
     

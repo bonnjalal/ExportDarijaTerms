@@ -21,12 +21,12 @@ class PronuncReg:
     pron = self.getPron(wikiText)
 
     audios = self.getAudio(wikiText)
-    rhymesDic = self.getRhymes(wikiText)
+    # rhymesDic = self.getRhymes(wikiText)
 
     pronDict = {}
     pronDict.update(pron)
     pronDict.update(audios)
-    pronDict.update(rhymesDic)
+    # pronDict.update(rhymesDic)
 
     pronunciationDic = pronDict
 
@@ -48,14 +48,19 @@ class PronuncReg:
   def getPron(self, txt):
     # i = 0
     
-    pronPattern = r'(?<={{IPA\|'+lng+r'\|)(.*?)(?=}})'
+    pronPattern = r'(?<={{ary-IPA\|)(.*?)(?=}})'
+    pronBkpPattr = r'(?<={{IPA\|'+lng+r'\|)(.*?)(?=}})'
     accentPattern = r'{{a\|(.*?)}}'
     # pattern = '{{IPA\|en\|(.*?)}}' 
     # accent = re.findall(r'{{a\|(.*?)}}', txt) 
     # pron = re.findall(r'{{IPA\|en\|(.*?)}}', txt)
     matchList = reH.finditer_with_line_numbers(pronPattern, txt)
     if len(matchList) <=0:
-        return {}
+      matchList = reH.finditer_with_line_numbers(pronBkpPattr, txt) 
+    
+    if len(matchList) <=0:
+      return {}
+
     pronDic = {"pron_text":{}}
     items = {}
     for i in range(len(matchList)):
@@ -69,7 +74,7 @@ class PronuncReg:
 
   def getAudio(self, txt):
     types = ["mp3", "ogg", "wav", "flac", "mid"]
-    audiosDic = {}
+    audiosDic = {"Audio":{}}
     items = {}
     for t in types:
     
@@ -82,7 +87,7 @@ class PronuncReg:
             for i in range(len(matchList)):
                 # audioLng = re.findall(lngPattern, matchList[i][2])
                 # item = {audioLng[0]: matchList[i][0] + '.' + t}
-                item = {lng: matchList[i][0] + '.' + t}
+                item = {i: matchList[i][0] + '.' + t}
                 # print("audio" + str(item))
                 items.update(item)
 

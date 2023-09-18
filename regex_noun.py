@@ -27,14 +27,35 @@ class NounReg:
 
     #############################################
 
+    def getNounItems(self, line):
+        pattrs = {
+            "Fem 1" : r'(?<=f\=)(.*?)(?=\|)',
+            "Fem 2" : r'(?<=f2\=)(.*?)(?=\|)',
+            "pl 1" : r'(?<=pl\=)(.*?)(?=\|)',
+            "pl 2" : r'(?<=pl2\=)(.*?)(?=\|)',
+            "gender 1" : r'(?<=g\=)(.*?)(?=\|)',
+            "gender 2" : r'(?<=g2\=)(.*?)(?=\|)' 
+        }
+
+        adjList = pattrs
+
+        for key, value in pattrs.items():
+            adjList[key] = reH.reFindFirst(value, line)
+
+        return adjList
+
     def getPlainLine(self, l):
         line = l
+        line = reH.getSynonyms(line) 
+        
         lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
-        # uxPatt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
         # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
 
         lbMatchList = reH.reFindAll(lbPatt, l)
-        # uxMatchList = reH.reFindAll(uxPatt, l)
+        uxMatch = reH.reFindFirst(ux1Patt, l)
+        uxMatch2 = reH.reFindFirst(ux2Patt, l)
         # glossMatchList = reH.reFindAll(glossPatt, l)
         
         # print(line)
@@ -45,11 +66,10 @@ class NounReg:
                 match = match.replace('|', ', ')
                 line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
         
-        # if len(uxMatchList) != 0:
-        #     # print(uxMatchList)
-        #     for m in uxMatchList:
-        #         match = m
-        #         line = line.replace('{{ux|'+lng+'|'+ m +'}}', match)
+        if uxMatch != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
+        elif uxMatch2 != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)
         
         # if len(glossMatchList) != 0:
         #     # print(uxMatchList)
@@ -75,13 +95,14 @@ class NounReg:
         
         # line = re.sub(r'\[^\]\}]/g', '', line)
         # line = line.replace(']', '')
-        line = line.replace("{{ux|"+lng+"|", "")
+        # line = line.replace("{{ux|"+lng+"|", "")
         line = line.replace("'''", "")
         line = line.replace("''", "")
         line = line.replace("{{q|", "")
         line = line.replace("{{gloss|", "")
         line = line.replace("{{m|"+lng+"|", "")
-        line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
         # print("AFTER: "+line)
 
         return line
@@ -89,6 +110,7 @@ class NounReg:
     def getNoun(self, txt):
         sectionDic = {}
         items = {}
+        nounItems = {}
         
         # text = '''_YES_ '''
 
@@ -112,8 +134,10 @@ class NounReg:
             l = lines[x]
 
             itemLen = len(items)
-
-            if l.startswith('# '):
+            
+            if "{{ary-noun" in l:
+                nounItems = self.getNounItems(l)
+            elif l.startswith('# '):
                 # count1Hashtag += 1 
                 if itemLen<i :
                     items.update({itemLen+1:{"meaning":meaning, "examples":examplesList }})
@@ -168,6 +192,7 @@ class NounReg:
             
         
         sectionDic.update(items)
+        sectionDic.update(nounItems)
  
         # fromDic.update({"Etymology": items})
         

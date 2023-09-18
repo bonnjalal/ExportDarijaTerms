@@ -26,31 +26,20 @@ class AdjReg:
         return itemFrom
 
     #############################################
-
+    
     def getPlainLine(self, l):
         line = l
         # print(line) 
-        syn2Patt = r'(?<=\|)(.*?)(?=\|)'
-        # newSynList = ""
-        if r"{{syn|" in line:
-            
-            sysList = reH.reFindAll(syn2Patt, line)
-            # print(sysList)
-            line = ""
-
-            for syn in sysList:
-                # print("syn: " + syn)
-                # r'[^؀-ۿ]'
-                s = re.sub(r'[^؀-ۿ]', '',syn)
-                if (s != ''):
-                    line += s + ", "
-
+        line = reH.getSynonyms(line) 
+        
         lbPatt = r'(?<={{lb\|'+lng+r'\|)(.*?)(?=}})'
-        # uxPatt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux2Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=}})'
+        ux1Patt = r'(?<={{ux\|'+lng+r'\|)(.*?)(?=\|)'
         # glossPatt = r'(?<={{gloss\|)(.*?)(?=}})'
 
         lbMatchList = reH.reFindAll(lbPatt, l)
-        # uxMatchList = reH.reFindAll(uxPatt, l)
+        uxMatch = reH.reFindFirst(ux1Patt, l)
+        uxMatch2 = reH.reFindFirst(ux2Patt, l)
         # glossMatchList = reH.reFindAll(glossPatt, l)
         
         # print(line)
@@ -61,12 +50,10 @@ class AdjReg:
                 match = match.replace('|', ', ')
                 line = line.replace('{{lb|'+lng+'|'+ m +'}}', '(' + match + ')')
         
-        # if len(uxMatchList) != 0:
-        #     # print(uxMatchList)
-        #     for m in uxMatchList:
-        #         match = m
-        #         line = line.replace('{{ux|'+lng+'|'+ m +'}}', match)
-        
+        if uxMatch != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch)
+        elif uxMatch2 != "":
+            line = line.replace('{{ux|'+lng+'|'+ uxMatch2 +'}}', uxMatch2)        
         # if len(glossMatchList) != 0:
         #     # print(uxMatchList)
         #     for m in glossMatchList:
@@ -92,22 +79,43 @@ class AdjReg:
         
         # line = re.sub(r'\[^\]\}]/g', '', line)
         # line = line.replace(']', '')
-        line = line.replace("{{ux|"+lng+"|", "")
+        # line = line.replace("{{ux|"+lng+"|", "")
         line = line.replace("'''", "")
         line = line.replace("''", "")
         line = line.replace("{{q|", "")
         line = line.replace("{{gloss|", "")
         line = line.replace("{{m|"+lng+"|", "")
-        line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
+        line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
         # print("AFTER: "+line)
 
         return line
 
    
+    def getAdjItems(self, line):
+        pattrs = {
+            "Fem 1" : r'(?<=f\=)(.*?)(?=\|)',
+            "Fem 2" : r'(?<=f2\=)(.*?)(?=\|)',
+            "common pl 1" : r'(?<=cpl\=)(.*?)(?=\|)',
+            "common pl 2" : r'(?<=cpl2\=)(.*?)(?=\|)',
+            "mas pl 1" : r'(?<=pl\=)(.*?)(?=\|)',
+            "mas pl 2" : r'(?<=pl2\=)(.*?)(?=\|)',
+            "fem pl 1" : r'(?<=fpl\=)(.*?)(?=\|)',
+            "fem pl 2" : r'(?<=fpl2\=)(.*?)(?=\|)' 
+        }
+
+        adjList = pattrs
+
+        for key, value in pattrs.items():
+            adjList[key] = reH.reFindFirst(value, line)
+
+        return adjList
+
 
     def getAdjective(self, txt):
         sectionDic = {}
         items = {}
+
+        adjItems = {}
         
         # text = '''_YES_ '''
 
@@ -132,7 +140,9 @@ class AdjReg:
 
             itemLen = len(items)
 
-            if l.startswith('# '):
+            if "{{ary-adj" in l:
+                adjItems = self.getAdjItems(l)
+            elif l.startswith('# '):
                 # count1Hashtag += 1 
                 if itemLen<i :
                     items.update({itemLen+1:{"meaning":meaning, "examples":examplesList }})
@@ -187,6 +197,7 @@ class AdjReg:
         
         
         sectionDic.update(items)
+        sectionDic.update(adjItems)
  
         # fromDic.update({"Etymology": items})
         

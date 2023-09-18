@@ -47,7 +47,7 @@ def getArticlesData(pagesList):
     for page in pagesList:
         title = page.title()
         if isArticle(page):
-            print(title)
+            # print(title)
             sectionsJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=sections&page={}&format=json".format(title))
             sectionsDict = sectionsJson.json()
             secIndex, secNum = getSecInfo(sectionsDict,"Moroccan Arabic") 
@@ -87,7 +87,8 @@ def getArticlesData(pagesList):
                             sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
                         break
             
-            print(sectionDic)
+            wordDict = {title:sectionDic}
+            print(wordDict)
 
             
 
