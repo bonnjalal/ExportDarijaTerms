@@ -1,0 +1,100 @@
+{  
+    "\u0622\u062f\u0649": {
+        "Etymology 1": {
+            "inh From 0": {
+                "ar": "\u0622\u0630\u064e\u0649",
+                "translation": "",
+                "transliteration": ""
+            },
+            "Pronunciation": {
+                "pron_text": {
+                    "ary": "/\u0294a\u02d0.da/"
+                },
+                "Audio": {
+                    "0": "LL-Q56426 (ary)-Fenakhay-\u0622\u062f\u0649.wav"
+                }
+            },
+            "Verb": {
+                "1": {
+                    "meaning": " to harm",
+                    "examples": [
+                        "syn \u0636\u0631, \u062c\u0631\u062d, "
+                    ]
+                }
+            }
+        },
+        "Etymology 2": {
+            "inh From 0": {
+                "fr": "\u0622\u0630\u064e\u0649",
+                "translation": "",
+                "transliteration": ""
+            },
+            "Pronunciation": {
+                "pron_text": {
+                    "ary": "/\u0294a\u02d0.da/"
+                },
+                "Audio": {
+                    "0": "LL-Q56426 (ary)-Fenakhay-\u0622\u062f\u0649.wav"
+                }
+            },
+            "Verb": {
+                "1": {
+                    "meaning": " to harm",
+                    "examples": [
+                        "syn \u0636\u0631, \u062c\u0631\u062d, "
+                    ]
+                }
+            }
+        }
+
+    },
+    "\u0622\u062f\u0648": {
+        "Etymology 1": {
+            "inh From 0": {
+                "ar": "\u0622\u0630\u064e\u0649",
+                "translation": "",
+                "transliteration": ""
+            },
+            "Pronunciation": {
+                "pron_text": {
+                    "ary": "/\u0294a\u02d0.da/"
+                },
+                "Audio": {
+                    "0": "LL-Q56426 (ary)-Fenakhay-\u0622\u062f\u0649.wav"
+                }
+            },
+            "Adjective": {
+                "1": {
+                    "meaning": " to harm",
+                    "examples": [
+                        "syn \u0636\u0631, \u062c\u0631\u062d, "
+                    ]
+                }
+            }
+        },
+        "Etymology 2": {
+            "inh From 0": {
+                "fr": "\u0622\u0630\u064e\u0649",
+                "translation": "",
+                "transliteration": ""
+            },
+            "Pronunciation": {
+                "pron_text": {
+                    "ary": "/\u0294a\u02d0.da/"
+                },
+                "Audio": {
+                    "0": "LL-Q56426 (ary)-Fenakhay-\u0622\u062f\u0649.wav"
+                }
+            },
+            "Adverb": {
+                "1": {
+                    "meaning": " to harm",
+                    "examples": [
+                        "syn \u0636\u0631, \u062c\u0631\u062d, "
+                    ]
+                }
+            }
+        }
+
+    }
+}

@@ -31,6 +31,8 @@ class NounReg:
         pattrs = {
             "Fem 1" : r'(?<=f\=)(.*?)(?=\|)',
             "Fem 2" : r'(?<=f2\=)(.*?)(?=\|)',
+            "singular 1": r'(?<=sing\=)(.*?)(?=\|)',
+            "singular 2": r'(?<=sing2\=)(.*?)(?=\|)',
             "pl 1" : r'(?<=pl\=)(.*?)(?=\|)',
             "pl 2" : r'(?<=pl2\=)(.*?)(?=\|)',
             "gender 1" : r'(?<=g\=)(.*?)(?=\|)',
@@ -135,7 +137,7 @@ class NounReg:
 
             itemLen = len(items)
             
-            if "{{ary-noun" in l:
+            if "{{ary-noun" in l or "{{ary-coll-noun" in l:
                 nounItems = self.getNounItems(l)
             elif l.startswith('# '):
                 # count1Hashtag += 1 

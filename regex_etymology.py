@@ -28,7 +28,7 @@ class EtyReg:
 
     
     def getFrom(self, txt):
-        types = ["inh", "bor", "der"]
+        types = ["inh", "bor", "der", "slbor"]
         fromDic = {}
         items = {}
 
@@ -59,6 +59,9 @@ class EtyReg:
                     translation = reH.reFindFirst(translationPatt, matchList[i][0], translationPattBak) 
                     
                     transliteration = reH.reFindFirst(transliterationPatt, matchList[i][0],transliterationPattBak)
+
+                    fromWord = fromWord.replace("[", "")
+                    fromWord = fromWord.replace("]", "")
 
                     item = {t + " From "+ str(i): {fromLng: fromWord, "translation": translation, "transliteration": transliteration}}
                     items.update(item)

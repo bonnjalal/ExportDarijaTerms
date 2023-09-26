@@ -226,7 +226,8 @@ class ReHelper:
         #         match = m
         #         line = line.replace('{{gloss|'+ m +'}}', match)
 
-
+        ## The folowing two lines remove any other wikiText template
+                
         linkPatt = r"\[\[(.*?)\]\]"
 
         linkList = re.findall(linkPatt, line)
@@ -250,6 +251,10 @@ class ReHelper:
         line = line.replace("{{q|", "")
         line = line.replace("{{gloss|", "")
         line = line.replace("{{m|"+lng+"|", "")
+        
+        restTempPattr = r'\{\{(.*?)\}\}'
+        line = re.sub(restTempPattr, " ", line)
+
         # line = re.sub(r'[^a-zA-Z0-9\'(),;.\s]', '',line)
         line = re.sub(r'[^a-zA-Z0-9\u0600-\u06FF\'(),;.\s]', '',line)
         # print("AFTER: "+line)

@@ -6,12 +6,13 @@ from regex_pron import PronuncReg
 from regex_pronoun import PronounReg
 from regex_synonyms import SynReg
 from regex_verb import VerbReg
+from regex_altforms import AltReg
 
 
 class ExtractHelper:
     def getSectContent(self, sectName, wikiTxt):
 
-        sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms"]
+        sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
         secDic = {}
         if sectName == sectNames[0]:
             myreg = EtyReg()
@@ -37,7 +38,9 @@ class ExtractHelper:
         elif sectName == sectNames[7]:
             myreg = SynReg()
             secDic = myreg.extractVerb(wikiTxt)
-
+        elif sectName == sectNames[8]:
+            myreg = AltReg()
+            secDic = myreg.extractAlt(wikiTxt)
         return secDic
 
 

@@ -2,9 +2,8 @@
 import pywikibot
 import requests
 import json
+from operator import itemgetter
 from extract_init import ExtractHelper
-
-
 
 extH = ExtractHelper()
 
@@ -17,6 +16,10 @@ def getSecInfo(secDict, line):
             return x["index"], x["number"]
     return "-1.0","-1.0"
 
+def isEty1InSec(text):
+    if "Etymology 1" in text:
+        return True
+    return False
 
 def getAllSect(secDict, startNum):
     startNum += "."
@@ -43,9 +46,12 @@ def isArticle(page):
 
 
 def getArticlesData(pagesList):
-    sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms"]
+
+    fp =  open('test.json', 'w')
+    sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
     for page in pagesList:
         title = page.title()
+        print(title)
         if isArticle(page):
             # print(title)
             sectionsJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=sections&page={}&format=json".format(title))
@@ -53,27 +59,160 @@ def getArticlesData(pagesList):
             secIndex, secNum = getSecInfo(sectionsDict,"Moroccan Arabic") 
             allSections = getAllSect(sectionsDict, secNum)
             # print("secIndex " + secIndex + " / secNumber " + secNum)
+            mainSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
+            mainSectionText = mainSectJson.json()
+            isEty1 = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"]
+) 
+            # print("isEty1: " + str(isEty1))
 
-            sectionDic = {}
-            
-            depth2title = ""
-            depth3title = ""
-            depth4title = ""
-            for num, index in allSections.items():
-                # print(num,index)
-                selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
-                sectionText = selectedSectJson.json()
-                secTxt = sectionText["parse"]["wikitext"]["*"]
-                secTitle = secTxt.splitlines()[0].replace('=', '')
-                secDepth = len(num.strip().replace('.', ''))
-                
-                # print(secTitle)
-                # print(secTxt)
-                
-                # depth5title = ""
-                for sectName in sectNames:
-                    if sectName in secTitle:
-                        sectDic = extH.getSectContent(sectName, secTxt)
+            if secNum != "-1.0":
+
+                sectionDic = {}
+                # [title, depth, dictionary]
+                dicList = []
+
+                depth2title = ""
+                depth3title = ""
+                depth4title = ""
+                # for num, index in allSections.items():
+                #     # print(num,index)
+                #     selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                #     sectionText = selectedSectJson.json()
+                #     secTxt = sectionText["parse"]["wikitext"]["*"]
+                #     secTitle = secTxt.splitlines()[0].replace('=', '')
+                #     # secDepth = len(num.strip().replace('.', ''))
+                #     secDepth = num.count('.') + 1 
+                #     
+                #     # print(secTitle)
+                #     # print(secTxt)
+                #     
+                #     # depth5title = ""
+                #
+                #     if not isEty1:
+                #         # depth2title = "Etymology 1"
+                #         # sectionDic[depth2title] = {}
+                #        
+                #         if secTitle == sectNames[0]:
+                #             secTitle = "Etymology 1"
+                #         else:
+                #             secDepth +=1
+                #
+                #
+                #     for sectName in sectNames:
+                #         if isEty1 and sectName in secTitle:
+                #             sectDic = extH.getSectContent(sectName, secTxt)
+                #             # sectList = [secTitle, secDepth, sectDic]
+                #             # dicList.append(sectList)
+                #             if secDepth == 2:
+                #                 depth2title = secTitle
+                #                 sectionDic[secTitle] = sectDic
+                #             elif secDepth == 3: 
+                #                 depth3title = secTitle
+                #                 sectionDic[depth2title][secTitle] = sectDic
+                #             elif secDepth == 4:
+                #                 depth4title = secTitle
+                #                 sectionDic[depth2title][depth3title][secTitle] = sectDic
+                #             elif secDepth == 5:
+                #                 sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+                #             break
+                #         elif sectName in secTitle and not isEty1:
+                #             sectDic = extH.getSectContent(sectName, secTxt)
+                #             sectList = [secTitle, secDepth, sectDic]
+                #             dicList.append(sectList)
+                #
+                # This will sort the outer list by items in the inner list (in this example by depth [index 2])
+                # [title, depth, dictionary]
+                # key=itemgetter(2,0,1) this will sort the list with multiplle items, starting from index 2
+
+                # if not isEty1:
+                #
+                #     sortedDicList = sorted(dicList, key=itemgetter(1)) 
+                #     print(sortedDicList) 
+                #     # dicList = []
+                #     for dic in sortedDicList:
+                #         secDepth = dic[1]
+                #         secTitle = dic[0]
+                #         sectDic = dic[2]
+                #         if secDepth == 2:
+                #             depth2title = secTitle
+                #             sectionDic[secTitle] = sectDic
+                #         elif secDepth == 3: 
+                #             depth3title = secTitle
+                #             sectionDic[depth2title][secTitle] = sectDic
+                #         elif secDepth == 4:
+                #             depth4title = secTitle
+                #             sectionDic[depth2title][depth3title][secTitle] = sectDic
+                #         elif secDepth == 5:
+                #             sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+ 
+                if isEty1:
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        secDepth = num.count('.') + 1 
+                        
+                        # print(secTitle)
+                        # print(secTxt)
+                        
+                        # depth5title = ""
+
+                        for sectName in sectNames:
+                            if sectName in secTitle:
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                # sectList = [secTitle, secDepth, sectDic]
+                                # dicList.append(sectList)
+                                if secDepth == 2:
+                                    depth2title = secTitle
+                                    sectionDic[secTitle] = sectDic
+                                elif secDepth == 3: 
+                                    depth3title = secTitle
+                                    sectionDic[depth2title][secTitle] = sectDic
+                                elif secDepth == 4:
+                                    depth4title = secTitle
+                                    sectionDic[depth2title][depth3title][secTitle] = sectDic
+                                elif secDepth == 5:
+                                    sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+                                break
+                            
+                elif not isEty1:
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        secDepth = num.count('.') + 1 
+                        
+                        # print(secTitle)
+                        # print(secTxt)
+                        
+                        # depth5title = ""
+
+                          
+                        if secTitle == sectNames[0]:
+                            secTitle = "Etymology 1"
+                        else:
+                            secDepth +=1
+
+                        for sectName in sectNames: 
+                            if sectName in secTitle:
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                sectList = [secTitle, secDepth, sectDic]
+                                dicList.append(sectList)
+                                break
+
+                    sortedDicList = sorted(dicList, key=itemgetter(1)) 
+                    # print(sortedDicList) 
+                    # dicList = []
+                    for dic in sortedDicList:
+                        secDepth = dic[1]
+                        secTitle = dic[0]
+                        sectDic = dic[2]
                         if secDepth == 2:
                             depth2title = secTitle
                             sectionDic[secTitle] = sectDic
@@ -85,16 +224,21 @@ def getArticlesData(pagesList):
                             sectionDic[depth2title][depth3title][secTitle] = sectDic
                         elif secDepth == 5:
                             sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
-                        break
-            
-            wordDict = {title:sectionDic}
-            print(wordDict)
-
-            
 
 
-                # print(secTitle)
-                # print(num.count("."))
+
+
+                wordDict = {title:sectionDic}
+                # print(wordDict)
+                json.dump(wordDict, fp, indent=4)
+                fp.write(',\n')
+                    # json.dump(wordDict, fp, indent=4)
+
+                
+
+
+                    # print(secTitle)
+                    # print(num.count("."))
 
 
 def extractCatName(cat):
