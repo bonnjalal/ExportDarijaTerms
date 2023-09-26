@@ -518,28 +518,41 @@ def nested_del(dic, keys):
         dic = dic[key]
     del dic[keys[-1]]
 
+def getAllDicKeys(d):
+    keyList = []
+    for key, value in d.items():
+        keyList.append(key)
+        if isinstance(value, dict):
+            get_all_keys(value)
+    return keyList
+
+def updateDic(dic,diffrence):
+
+    data = copy.deepcopy(dic)
+    for k, v in data.copy().items():
+        
+        if isinstance(v, dict):     # For DICT
+            data[k] = updateDic(v,diffrence)
+        elif isinstance(v, list):   # For LIST
+            # diffrence = col1 - diffrence
+            tmpRng = [v[0], [v[1][0]+diffrence ,v[1][1]+diffrence]]
+            data[k] = tmpRng
+        # elif v == 'CHANGE ME':      # Update Key-Value
+        #     # data.pop(k)
+        #     # OR
+        #     del data[k]
+        #     data[f"{k}.CHANGED"] = 'CHANGED'
+    # print(rangesDict)
+    return data
+
 rangesDict = {"word": {"rng" : [[1,1],[2,2]]}}
 keysList = ["word"]
 def insertCell(data, crow, depth1):
-    # print(rangesDict)
-    # countEnter +=1
-    # countExit -=1
     
     d = 0
 
-    # mrgList = mergeList
-
     dp = depth1
 
-    # tmpRngList = copy.deepcopy(rangeList)
-    # print("id list: " + str(id(rangeList)))
-    # print("id copy list: " + str(id(tmpRngList)))
-    # rngr = tmpRngList[dp-1][0]
-    # rngr = [dp, dp] 
-    # rngc = tmpRngList[dp-1][1]
-    
-    # isEntringFun = True
-   
     insertCol = True
   
     for it2 in data:
@@ -549,7 +562,6 @@ def insertCell(data, crow, depth1):
         tmpKeysList1 = []
         for i in range(dp):
             tmpKeysList1.append(keysList[i])
-        # tmpKeysList1.append("rng")
 
         rng = nested_get(rangesDict, tmpKeysList1+["rng"]) 
         
@@ -564,87 +576,27 @@ def insertCell(data, crow, depth1):
             row2 = dp
             cCell = ws.cell(row=row2, column=maxCol)
 
-                        # print("cCell : " + str(cCell))
-            # print("MaxCol before empty : " + str(maxCol))
-            # print("lenth range: " + str(len(rangeList)) + " dp " + str(dp))
             if not cellEmpty(cCell) or not insertCol:
-            # if not cellEmpty(cCell) or count[1] >= count[0]:
-                # print("not empty")
                 maxCol += 1
                 ws.insert_cols(idx=maxCol)
                 col1 = maxCol
-            # if col1 == maxCol and cellEmpty(cCell):
-            #     maxCol = maxCol
-            # else:
-            #     maxCol += 1
-            #     ws.insert_cols(idx=maxCol)
-            #     col1 = maxCol
-            
-            # print("range c before : " + str(rngc))
-            # rngc[0] = maxCol
-                # print("search range after " + str(rngr) + " / " + str(rngc))
-            
-            
-            
             
             col2 = maxCol
 
-            # mrgListlen = len(rangeList)
-            
-            # if(mrgListlen > row2):
-            #     for r in range(mrgListlen -(row2-1)):
-            #         mrgList.pop(mrgListlen-1-r)
-
-            # tmpDict = copy.deepcopy(rangesDict)  
-            # tmp2Dict = dict 
+           
             keysListTmp = [] 
             for r in range(dp):
                 if r == 0:
                     keysListTmp.append(keysList[r])
-                    # keysListWRng = copy.deepcopy(keysListTmp)
-                    # keysListWRng.append("rng")
                     tmpRng = nested_get(rangesDict, keysListTmp + ["rng"])
                     tmpRng[1][1] = ws.max_column + 1
                     nested_set(rangesDict, keysListTmp + ["rng"], tmpRng) 
                 else:
                     keysListTmp.append(keysList[r])
-                    # keysListWRng = copy.deepcopy(keysListTmp)
-                    # keysListWRng.append("rng")
                     tmpRng = nested_get(rangesDict, keysListTmp + ["rng"])
                     tmpRng[1][1]= col2
                     nested_set(rangesDict, keysListTmp + ["rng"], tmpRng) 
 
-                 ##### for debuging
-                dDict = nested_get(rangesDict, keysListTmp + ["rng"])
-                # print("#### " + str(keysList[r]) +" #### | " + str(dDict))
-                # rangeList[r][1][1] = col2
-            # for r in range(dp):
-            #     rangeList[r][1][1] = col2
-
-                # if mrgList[r][1][0] != col2:
-                    # print(" /row start " + str(mrgList[r][0][0]) + " /col start " + str(mrgList[r][1][0]) + " /row end " + str(mrgList[r][0][1]) + " /col end " + str(col2))
-                    # try:
-                    #     ws.unmerge_cells(start_row=mrgList[r][0][0], start_column=mrgList[r][1][0],
-                    #                end_row=mrgList[r][0][1], end_column=mrgList[r][1][1])
-                    # except :
-                    #     print("not merged")
-                    #   
-                    #
-                    # ws.merge_cells(start_row=mrgList[r][0][0], start_column=mrgList[r][1][0],
-                    #                end_row=mrgList[r][0][1], end_column=col2)  
-
-                    # mrgList[r][1][1] = col2
-
-                    # rng1, rng2 = getMergedCellRange(ws.cell(row=mrgList[r][0][0], column=mrgList[r][1][0]))
-                    #
-                    # print("New Merge List: " + str(rng1) + " / " + str(rng2))
-                    # 
-                    # # print(mrgList[r])
-                    #
-                    # cell = ws.cell(row=mrgList[r][0][0], column=mrgList[r][1][0])  
-                    # # print(mrgRange)
-                    # # cell.value = 'Devansh Sharma'  
-                    # cell.alignment = Alignment(horizontal='center', vertical='center') 
 
             ws.cell(row=row2, column=col2).value = it2
         
@@ -657,16 +609,36 @@ def insertCell(data, crow, depth1):
             tmpKeysList1.append("rng")
             nested_set(rangesDict, tmpKeysList1, [rngr, rngc])
         else:
-            it2rng = nested_get(rangesDict, tmpKeysList1+[it2,"rng"])
-            diffrence = col1 - it2rng[1][0]
-            tmpRng = [it2rng[0], [it2rng[1][0]+diffrence ,it2rng[1][1]+diffrence]]
 
-            nested_set(rangesDict, tmpKeysList1+[it2,"rng"], tmpRng)
             
+            if dp == 1:
+                # keyList3 = getAllDicKeys(rangesDict["word"][it2])
+                # # Removing 'rng' key
+                # keyList3.pop(0)
+                # print("All keys : " + str(keyList3))
+                # keyTmpList3 = ["word"]
+
+                # print(rangesDict)
+                # data3 = copy.deepcopy(rangesDict)
+                it2rng = rangesDict['word'][it2]['rng']
+                diffrence = col1 - it2rng[1][0]
+                newData3 = updateDic(rangesDict["word"][it2], diffrence)
+                rangesDict["word"][it2] = newData3
+                print(rangesDict)
+                # for r in range(len(keyList3)):
+                #     keyTmpList3.append(keyList3[r])                    
+                #     it2rng = nested_get(rangesDict, keyTmpList3+["rng"])
+                #     diffrence = col1 - it2rng[1][0]
+                #     tmpRng = [it2rng[0], [it2rng[1][0]+diffrence ,it2rng[1][1]+diffrence]]
+                #     nested_set(rangesDict, tmpKeysList1+[it2,"rng"], tmpRng)
+
+
+            # it2rng = nested_get(rangesDict, tmpKeysList1+[it2,"rng"])
+            # diffrence = col1 - it2rng[1][0]
+            # tmpRng = [it2rng[0], [it2rng[1][0]+diffrence ,it2rng[1][1]+diffrence]]
+            #
+            # nested_set(rangesDict, tmpKeysList1+[it2,"rng"], tmpRng)
             
-
-
-
             # rangesDict["word"]["rng"] = [[1,1],[2,ws.max_column]]
         try: 
             keysList[dp] = it2
@@ -703,6 +675,32 @@ def insertCell(data, crow, depth1):
 
         insertCol = False
 
+def get_all_keys(d):
+    for key, value in d.items():
+        yield key
+        if isinstance(value, dict):
+            yield from get_all_keys(value)
+
+def getAllRngValues(d):
+    for key, value in d.items():
+        # yield value
+        if key == "rng":
+            yield value
+        if isinstance(value, dict):
+            yield from getAllRngValues(value)
+
+def mergeRanges():
+    i = 0
+    for x in getAllRngValues(rangesDict): 
+        if i != 0:
+            print("merging ....")
+            print(x)
+            ws.merge_cells(start_row=x[0][0], start_column=x[1][0], end_row=x[0][1] , end_column=x[1][1] )
+            cell = ws.cell(row=x[0][0], column=x[1][0])  
+            # # cell.value = 'Devansh Sharma'  
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+        i+=1
+
 def insertData():
     axisr = [1,1]
     range2r = range(2,3)
@@ -726,7 +724,7 @@ def insertData():
     maxCol = ws.max_column
     d = 0
     for it in data.keys():
-        print(rangesDict)
+        
         
         # word name
         crow+=1
@@ -737,6 +735,9 @@ def insertData():
 
         insertCell(data[it], crow, 1)
         # insertCell(data[it], crow, axisr, axisc, [], 1)
+
+    # print(rangesDict)
+    mergeRanges()
 
 def insertData2():
     range1r = range(1, ws.max_row + 1)
@@ -774,15 +775,6 @@ def insertData2():
                 row2 = 1
                 col2 = maxCol
 
-                # ccol +=1
-
-                # cell = ws.cell(row=1, column=ccol)
-                # if cellEmpty(cell):
-                #     cell.value = it2
-                # else:
-                #     ws.insert_cols(idx=ccol+1)
-                #     ws.cell(row=1, column=ccol+3).value = it2
-                #     ccol +=1
 
             if depth(data[it][it2]) <= d:
                 value = data[it][it2]
