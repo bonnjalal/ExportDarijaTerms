@@ -172,8 +172,14 @@ class PronounReg:
             examplesList = []
             meaning = ""
             
-        
-        sectionDic.update(items)
+        if len(items) == 0:
+            sectionDic.update({1:{"meaning":'', "examples":[]}, 2:{"meaning":'', "examples":[]}})
+        elif len(items) == 1:
+            sectionDic.update({1:items[1], 2:{"meaning":'', "examples":[]}})
+        else:
+            sectionDic.update({1:items[1], 2:items[2]})
+
+        # sectionDic.update(items)
  
         # fromDic.update({"Etymology": items})
         

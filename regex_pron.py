@@ -61,22 +61,28 @@ class PronuncReg:
     if len(matchList) <=0:
       return {}
 
-    pronDic = {"pron_text":{}}
+    pronDic = {}
     items = {}
     for i in range(len(matchList)):
+       if len(pronDic) >= 2:
+         break
        accent = reH.reFindFirst(accentPattern, matchList[i][2], default=lng)
-       item = {accent: matchList[i][0]}
-       items.update(item)
+       item = {"accent":accent, "text":matchList[i][0]}
+       # items.update(item)
 
-    pronDic.update({"pron_text":items})
+       pronDic.update({"pron_text " + str(i+1):item})
+        
 
     return pronDic
 
   def getAudio(self, txt):
-    types = ["mp3", "ogg", "wav", "flac", "mid"]
+    types = ["ogg", "mp3", "wav", "flac", "mid"]
     audiosDic = {"Audio":{}}
     items = {}
     for t in types:
+        if len(items) >=2:
+                  break
+
     
         audioPattern = r'(?<='+lng+r'\|)(.*?)(?=.'+t+r'\|)'
         lngPattern = r'(?<=.'+t+r'\|)(.*?)(?=}})'
@@ -85,13 +91,16 @@ class PronuncReg:
         # print(matchList)
         if len(matchList) > 0:
             for i in range(len(matchList)):
+                if len(items) >=2:
+                  break
                 # audioLng = re.findall(lngPattern, matchList[i][2])
                 # item = {audioLng[0]: matchList[i][0] + '.' + t}
-                item = {i: matchList[i][0] + '.' + t}
+                item = {len(items)+1: matchList[i][0] + '.' + t}
                 # print("audio" + str(item))
                 items.update(item)
 
-            audiosDic.update({"Audio":items})
+    print(items)
+    audiosDic.update({"Audio":items})
 
 
     return audiosDic
@@ -125,11 +134,13 @@ class PronuncReg:
 
 text = '''* {{a|RP}} {{IPA|en|/stɔːm/}}
   * {{a|GA}} {{IPA|en|/stɔɹm/}}a
+  * {{a|Gn}} {{IPA|en|/stɔɹm/}}a
   * {{audio|en|En-us-storm.ogg|Audio (GA)}}
   * {{rhymes|en|ɔː(ɹ)m|s=1}}
   * {{audio|en|En-us-storm.wav|Audio (US)}}
+  * {{audio|en|En-us-storm.mp3|Audio (US)}}
   '''
 
-# myreg = PronReg()
-# result = myreg.extractPronunciation(text)
-# print(result)
+myreg = PronuncReg()
+result = myreg.extractPronunciation(text)
+print(result)

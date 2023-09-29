@@ -86,7 +86,7 @@ class ReHelper:
 
         # syn = ""
         if "{{syn|" in l:
-            syn = r"syn: "
+            syn = r"(synonyms) "
             line = re.sub(r'[^\u0600-\u06FF\|]', '',l)
             line = line.replace('|', ' ')
             line = line.strip()
@@ -96,7 +96,7 @@ class ReHelper:
                 if s != "" and s != " " and s != "  " and s != "   " and s != "    ":
                     syn += s + ", "
             # print(syn)
-            return syn
+            return syn + "; "
 
         return line
     
@@ -104,7 +104,7 @@ class ReHelper:
         l = line
       
         if "{{ant|" in l:
-            syn = "ant: "
+            syn = "(antonyms) "
             line = re.sub(r'[^\u0600-\u06FF\|]', '',l)
             line = line.replace('|', ' ')
             line = line.strip()
@@ -114,7 +114,7 @@ class ReHelper:
                 if s != "" and s != " " and s != "  " and s != "   " and s != "    ":
                     syn += s + ", "
             # print(syn)
-            return syn
+            return syn + "; "
 
         return line
 

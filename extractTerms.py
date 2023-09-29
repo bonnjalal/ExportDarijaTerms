@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 import pywikibot
 import requests
-import json
+# import json
 from operator import itemgetter
 from extract_init import ExtractHelper
+from dicToXlsx import DicToExcel
+from openpyxl import Workbook
+# from openpyxl.styles import Alignment  
+# import openpyxl
+
 
 extH = ExtractHelper()
 
@@ -16,8 +21,8 @@ def getSecInfo(secDict, line):
             return x["index"], x["number"]
     return "-1.0","-1.0"
 
-def isEty1InSec(text):
-    if "Etymology 1" in text:
+def isEty1InSec(text, name):
+    if name in text:
         return True
     return False
 
@@ -44,10 +49,15 @@ def isArticle(page):
 
 
 
+wb = Workbook()  
+ws = wb.active
+dToE = DicToExcel(wb, ws)
+crow = 5
+
 
 def getArticlesData(pagesList):
 
-    fp =  open('test.json', 'w')
+    # fp =  open('test.json', 'w')
     sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
     for page in pagesList:
         title = page.title()
@@ -61,8 +71,9 @@ def getArticlesData(pagesList):
             # print("secIndex " + secIndex + " / secNumber " + secNum)
             mainSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
             mainSectionText = mainSectJson.json()
-            isEty1 = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"]
-) 
+            print(mainSectionText["parse"]["wikitext"]["*"])
+            isEty1 = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "Etymology 1") 
+            isEty = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "=Etymology=") 
             # print("isEty1: " + str(isEty1))
 
             if secNum != "-1.0":
@@ -177,7 +188,48 @@ def getArticlesData(pagesList):
                                 elif secDepth == 5:
                                     sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
                                 break
-                            
+                elif not isEty:
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        secDepth = num.count('.') + 1 
+                        
+                        if secDepth == 2:
+                            sectList = ["Etymology 1", secDepth, {}]
+                            dicList.append(sectList)
+
+                        secDepth+=1
+
+                        for sectName in sectNames: 
+                            if sectName in secTitle:
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                sectList = [secTitle, secDepth, sectDic]
+                                dicList.append(sectList)
+                                break
+
+                    sortedDicList = sorted(dicList, key=itemgetter(1)) 
+                    # print(sortedDicList) 
+                    # dicList = []
+                    for dic in sortedDicList:
+                        secDepth = dic[1]
+                        secTitle = dic[0]
+                        sectDic = dic[2]
+                        if secDepth == 2:
+                            depth2title = secTitle
+                            sectionDic[secTitle] = sectDic
+                        elif secDepth == 3: 
+                            depth3title = secTitle
+                            sectionDic[depth2title][secTitle] = sectDic
+                        elif secDepth == 4:
+                            depth4title = secTitle
+                            sectionDic[depth2title][depth3title][secTitle] = sectDic
+                        elif secDepth == 5:
+                            sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+
                 elif not isEty1:
                     for num, index in allSections.items():
                         # print(num,index)
@@ -227,11 +279,16 @@ def getArticlesData(pagesList):
 
 
 
-
                 wordDict = {title:sectionDic}
+                print(wordDict)
+                global crow
+                crow+=1
+                ws.cell(row=crow, column=1).value = title
+                dToE.insertCell(wordDict[title], crow, 1)
+
                 # print(wordDict)
-                json.dump(wordDict, fp, indent=4)
-                fp.write(',\n')
+                # json.dump(wordDict, fp, indent=4)
+                # fp.write(',\n')
                     # json.dump(wordDict, fp, indent=4)
 
                 
@@ -239,7 +296,7 @@ def getArticlesData(pagesList):
 
                     # print(secTitle)
                     # print(num.count("."))
-
+    print(dToE.rangesDict)
 
 def extractCatName(cat):
     title = cat
@@ -254,13 +311,17 @@ def main (catName = "Moroccan Arabic language"):
     if  pagesCount >= 1:
         getArticlesData(list(cat.articles()))
 
-    if subcatsCount >=1:
-        catList = list(cat.subcategories())
-        for category in catList:
-            name = extractCatName(category.title())
-            main(name)
+    # if subcatsCount >=1:
+    #     catList = list(cat.subcategories())
+    #     for category in catList:
+    #         name = extractCatName(category.title())
+    #         main(name)
 
-main()
+# main("Moroccan Arabic interjections")
+main("Moroccan Arabic lemmas")
+
+# dToE.mergeRanges()
+dToE.saveExcel()
 
 
 # myreg()
