@@ -11,9 +11,443 @@ class DicToExcel:
     # wb = Workbook()  
     # ws = wb.active
 
+    keysDict = {
+        "Etymology 1": {
+            "rng": [[1,1],[2,50]],
+            "From 1": {
+                "rng": [[2,2],[2,4]],
+                "Language": {
+                    "rng": [[3,3],[2,2]]
+                },
+                "Word": {
+                    "rng": [[3,3],[3,3]]
+                },
+                "translation": {
+                    "rng": [[3,3],[4,4]]
+                }
+            },
+            "From 2": {
+                "rng": [[2,2],[5,7]],
+                "Language": {
+                    "rng": [[3,3],[5,5]]
+                },
+                "Word": {
+                    "rng": [[3,3],[6,6]]
+                },
+                "translation": {
+                    "rng": [[3,3],[7,7]]
+                }
+            },
+            "Pronunciation":{
+                "rng": [[2,2],[8,12]],
+                "pron_text 1": {
+                    "rng": [[3,3],[8,9]],
+                    "accent": {
+                        "rng": [[4,4],[8,8]]
+                    },
+                    "text": {
+                        "rng": [[4,4],[9,9]]
+                    }
+
+                },
+                "pron_text 2": {
+                    "rng": [[3,3],[10,11]],
+                    "accent": {
+                        "rng": [[4,4],[10,10]]
+                    },
+                    "text": {
+                        "rng": [[4,4],[11,11]]
+                    }
+                },
+                "Audios":{
+                    "rng": [[3,3],[12,12]]
+                }
+            },
+            "Noun": {
+                "rng": [[2,2],[13,24]],
+                1: {
+                    "rng": [[3,3],[13,14]],
+                    "meaning": {
+                        "rng": [[4,4],[13,13]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[14,14]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[15,16]],
+                    "meaning": {
+                        "rng": [[4,4],[15,15]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[16,16]]
+                    }
+                },
+                "Feminine 1": {
+                    "rng": [[3,3],[17,17]]
+                },
+                "Feminine 2": {
+                    "rng": [[3,3],[18,18]]
+                },
+                "singular 1": {
+                    "rng": [[3,3],[19,19]]
+                },
+                "singular 2": {
+                    "rng": [[3,3],[20,20]]
+                },
+                "plural 1": {
+                    "rng": [[3,3],[21,21]]
+                },
+                "plural 2": {
+                    "rng": [[3,3],[22,22]]
+                },
+                "gender 1": {
+                    "rng": [[3,3],[23,23]]
+                },
+                "gender 2": {
+                    "rng": [[3,3],[24,24]]
+                }
+
+            },
+            "Verb": {
+                "rng": [[2,2],[25,28]],
+                1: {
+                    "rng": [[3,3],[25,26]],
+                    "meaning": {
+                        "rng": [[4,4],[25,25]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[26,26]]
+                    },
+                },
+                2: {
+                    "rng": [[3,3],[27,28]],
+                    "meaning": {
+                        "rng": [[4,4],[27,27]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[28,28]]
+                    }
+                }
+            },
+            "Adverb": {
+                "rng": [[2,2],[29,32]],
+                1: {
+                    "rng": [[3,3],[29,30]],
+                    "meaning": {
+                        "rng": [[4,4],[29,29]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[30,30]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[31,32]],
+                    "meaning": {
+                        "rng": [[4,4],[31,31]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[32,32]]
+                    }
+                }
+            },
+            "Adjective": {
+                "rng": [[2,2],[33,44]],
+                1: {
+                    "rng": [[3,3],[33,34]],
+                    "meaning": {
+                        "rng": [[4,4],[33,33]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[34,34]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[35,36]],
+                    "meaning": {
+                        "rng": [[4,4],[35,35]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[36,36]]
+                    }
+                },
+                "Feminine 1": {
+                    "rng": [[3,3],[37,37]]
+                },
+                "Feminine 2": {
+                    "rng": [[3,3],[38,38]]
+                },
+                "common pl 1": {
+                    "rng": [[3,3],[39,39]]
+                },
+                "common pl 2": {
+                    "rng": [[3,3],[40,40]]
+                },
+                "mas plural 1": {
+                    "rng": [[3,3],[41,41]]
+                },
+                "mas plural 2": {
+                    "rng": [[3,3],[42,42]]
+                },
+                "fem plural 1": {
+                    "rng": [[3,3],[43,43]]
+                },
+                "fem plural 2": {
+                    "rng": [[3,3],[44,44]]
+                }
+
+            },
+            "Pronoun": {
+                "rng": [[2,2],[45,48]],
+                1: {
+                    "rng": [[3,3],[45,46]],
+                    "meaning": {
+                        "rng": [[4,4],[45,45]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[46,46]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[47,48]],
+                    "meaning": {
+                        "rng": [[4,4],[47,47]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[48,48]]
+                    }
+                }
+            },
+            "Synonyms": {
+                "rng": [[2,2],[49,49]]
+            },
+            "Alternative forms": {
+                "rng": [[2,2],[50,50]]
+            }
+
+        },
+        "Etymology 2": {
+            "rng": [[1,1],[51,99]],
+            "From 1": {
+                "rng": [[2,2],[51,53]],
+                "Language": {
+                    "rng": [[3,3],[51,51]]
+                },
+                "Word": {
+                    "rng": [[3,3],[52,52]]
+                },
+                "translation": {
+                    "rng": [[3,3],[53,53]]
+                }
+            },
+            "From 2": {
+                "rng": [[2,2],[54,56]],
+                "Language": {
+                    "rng": [[3,3],[54,54]]
+                },
+                "Word": {
+                    "rng": [[3,3],[55,55]]
+                },
+                "translation": {
+                    "rng": [[3,3],[56,56]]
+                }
+            },
+            "Pronunciation":{
+                "rng": [[2,2],[57,61]],
+                "pron_text 1": {
+                    "rng": [[3,3],[57,58]],
+                    "accent": {
+                        "rng": [[4,4],[57,57]]
+                    },
+                    "text": {
+                        "rng": [[4,4],[58,58]]
+                    }
+
+                },
+                "pron_text 2": {
+                    "rng": [[3,3],[59,60]],
+                    "accent": {
+                        "rng": [[4,4],[59,59]]
+                    },
+                    "text": {
+                        "rng": [[4,4],[60,60]]
+                    }
+                },
+                "Audios":{
+                    "rng": [[3,3],[61,61]]
+                }
+            },
+            "Noun": {
+                "rng": [[2,2],[62,73]],
+                1: {
+                    "rng": [[3,3],[62,63]],
+                    "meaning": {
+                        "rng": [[4,4],[62,62]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[63,63]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[64,65]],
+                    "meaning": {
+                        "rng": [[4,4],[64,64]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[65,65]]
+                    }
+                },
+                "Feminine 1": {
+                    "rng": [[3,3],[66,66]]
+                },
+                "Feminine 2": {
+                    "rng": [[3,3],[67,67]]
+                },
+                "singular 1": {
+                    "rng": [[3,3],[68,68]]
+                },
+                "singular 2": {
+                    "rng": [[3,3],[69,69]]
+                },
+                "plural 1": {
+                    "rng": [[3,3],[70,70]]
+                },
+                "plural 2": {
+                    "rng": [[3,3],[71,71]]
+                },
+                "gender 1": {
+                    "rng": [[3,3],[72,72]]
+                },
+                "gender 2": {
+                    "rng": [[3,3],[73,73]]
+                }
+
+            },
+            "Verb": {
+                "rng": [[2,2],[74,77]],
+                1: {
+                    "rng": [[3,3],[74,75]],
+                    "meaning": {
+                        "rng": [[4,4],[74,74]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[75,75]]
+                    },
+                },
+                2: {
+                    "rng": [[3,3],[76,77]],
+                    "meaning": {
+                        "rng": [[4,4],[76,76]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[77,77]]
+                    }
+                }
+            },
+            "Adverb": {
+                "rng": [[2,2],[78,81]],
+                1: {
+                    "rng": [[3,3],[78,79]],
+                    "meaning": {
+                        "rng": [[4,4],[78,78]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[79,79]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[80,81]],
+                    "meaning": {
+                        "rng": [[4,4],[80,80]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[81,81]]
+                    }
+                }
+            },
+            "Adjective": {
+                "rng": [[2,2],[82,93]],
+                1: {
+                    "rng": [[3,3],[82,83]],
+                    "meaning": {
+                        "rng": [[4,4],[82,82]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[83,83]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[84,85]],
+                    "meaning": {
+                        "rng": [[4,4],[84,84]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[85,85]]
+                    }
+                },
+                "Feminine 1": {
+                    "rng": [[3,3],[86,86]]
+                },
+                "Feminine 2": {
+                    "rng": [[3,3],[87,87]]
+                },
+                "common pl 1": {
+                    "rng": [[3,3],[88,88]]
+                },
+                "common pl 2": {
+                    "rng": [[3,3],[89,89]]
+                },
+                "mas plural 1": {
+                    "rng": [[3,3],[90,90]]
+                },
+                "mas plural 2": {
+                    "rng": [[3,3],[91,91]]
+                },
+                "fem plural 1": {
+                    "rng": [[3,3],[92,92]]
+                },
+                "fem plural 2": {
+                    "rng": [[3,3],[93,93]]
+                }
+
+            },
+            "Pronoun": {
+                "rng": [[2,2],[94,97]],
+                1: {
+                    "rng": [[3,3],[94,95]],
+                    "meaning": {
+                        "rng": [[4,4],[94,94]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[95,95]]
+                    }
+                },
+                2: {
+                    "rng": [[3,3],[96,97]],
+                    "meaning": {
+                        "rng": [[4,4],[96,96]]
+                    },
+                    "examples": {
+                        "rng": [[4,4],[97,97]]
+                    }
+                }
+            },
+            "Synonyms": {
+                "rng": [[2,2],[98,98]]
+            },
+            "Alternative forms": {
+                "rng": [[2,2],[99,99]]
+            }
+        }
+    }
+
     def __init__(self, __wb, __ws):
         self.wb = __wb
         self.ws = __ws
+        self.setDicKeyToExcel(self.keysDict)
+        self.mergeRanges(self.keysDict)
+
+        
 
     def depth(self,d):
         if isinstance(d, dict):
@@ -111,8 +545,19 @@ class DicToExcel:
         for key, value in d.items():
             keyList.append(key)
             if isinstance(value, dict):
-                self.get_all_keys(value)
+                self.getAllDicKeys(value)
         return keyList
+
+    def setDicKeyToExcel(self, d):
+        
+        for key, value in d.items():
+            
+            if isinstance(value, dict):
+                row = value["rng"][0][0]
+                col = value["rng"][1][0]
+                self.ws.cell(row=row, column=col).value = key
+                self.setDicKeyToExcel(value)
+
 
     def updateDic(self,dic,diffrence):
 
@@ -133,9 +578,48 @@ class DicToExcel:
         # print(rangesDict)
         return data
 
-    rangesDict = {"word": {"rng" : [[1,1],[2,2]]}}
-    keysList = ["word"]
+    keysList = []
     def insertCell(self, data, crow, depth1):
+        
+        d = 0
+        dp = depth1
+
+        # it = ""
+        
+        for it2 in data:
+
+            # it = it2
+            
+            try: 
+                self.keysList[dp-1] = it2
+            except:
+                self.keysList.append(it2)
+                
+            if self.depth(data[it2]) <= d:
+                keysListTmp = []
+                for r in range(dp):
+                    keysListTmp.append(self.keysList[r])
+                # print("keys list tmp")
+                # print(keysListTmp)
+                # print(self.keysList)
+                # tmpRng = self.nested_get(self.keysDict, self.keysList + ["rng"])
+                tmpRng = self.nested_get(self.keysDict, keysListTmp + ["rng"])
+                col = tmpRng[1][0]
+
+                value = data[it2]
+                if (type(value) == list):
+                    value = ', '.join([str(elem) for elem in value])
+                self.ws.cell(row=crow, column=col).value = value
+            else:
+                dp = self.insertCell(data[it2], crow, dp+1)
+                # self.insertCell(data[it2], crow, dp+1)
+
+        # self.keysList.remove(it)
+        return dp - 1
+
+    rangesDict = {"word": {"rng" : [[1,1],[2,2]]}}
+    # keysList = ["word"]
+    def insertCell2(self, data, crow, depth1):
         
         d = 0
         dp = depth1
@@ -250,20 +734,20 @@ class DicToExcel:
             if isinstance(value, dict):
                 yield from self.getAllRngValues(value)
 
-    def mergeRanges(self):
-        i = 0
-        for x in self.getAllRngValues(self.rangesDict): 
-            if i != 0:
-                print("merging ....")
-                print(x)
-                self.ws.merge_cells(start_row=x[0][0], start_column=x[1][0], end_row=x[0][1] , end_column=x[1][1] )
-                cell = self.ws.cell(row=x[0][0], column=x[1][0])  
-                # # cell.value = 'Devansh Sharma'  
-                cell.alignment = Alignment(horizontal='center', vertical='center')
-            i+=1
+    def mergeRanges(self, d):
+        # i = 0
+        print("merging ....")
+        for x in self.getAllRngValues(d): 
+            # if i != 0:
+            # print(x)
+            self.ws.merge_cells(start_row=x[0][0], start_column=x[1][0], end_row=x[0][1] , end_column=x[1][1] )
+            cell = self.ws.cell(row=x[0][0], column=x[1][0])  
+            # # cell.value = 'Devansh Sharma'  
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            # i+=1
 
-    def saveExcel(self):
-        self.wb.save("test.xlsx")
+    def saveExcel(self, title):
+        self.wb.save(title)
 
 
 

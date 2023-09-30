@@ -93,14 +93,14 @@ class AdjReg:
    
     def getAdjItems(self, line):
         pattrs = {
-            "Fem 1" : r'(?<=f\=)(.*?)(?=\|)',
-            "Fem 2" : r'(?<=f2\=)(.*?)(?=\|)',
+            "Feminine 1" : r'(?<=f\=)(.*?)(?=\|)',
+            "Feminine 2" : r'(?<=f2\=)(.*?)(?=\|)',
             "common pl 1" : r'(?<=cpl\=)(.*?)(?=\|)',
             "common pl 2" : r'(?<=cpl2\=)(.*?)(?=\|)',
-            "mas pl 1" : r'(?<=pl\=)(.*?)(?=\|)',
-            "mas pl 2" : r'(?<=pl2\=)(.*?)(?=\|)',
-            "fem pl 1" : r'(?<=fpl\=)(.*?)(?=\|)',
-            "fem pl 2" : r'(?<=fpl2\=)(.*?)(?=\|)' 
+            "mas plural 1" : r'(?<=pl\=)(.*?)(?=\|)',
+            "mas plural 2" : r'(?<=pl2\=)(.*?)(?=\|)',
+            "fem plural 1" : r'(?<=fpl\=)(.*?)(?=\|)',
+            "fem plural 2" : r'(?<=fpl2\=)(.*?)(?=\|)' 
         }
 
         adjList = pattrs
@@ -1015,7 +1015,8 @@ In informal (often jocular) contexts, ''[[best]]'' may be inflected further and 
 {{trans-bottom}}
 
 """
-myregl = AdjReg()
-getNoun = myregl.extractVerb(text)
 
-print(getNoun)
+# myregl = AdjReg()
+# getNoun = myregl.extractVerb(text)
+#
+# print(getNoun)

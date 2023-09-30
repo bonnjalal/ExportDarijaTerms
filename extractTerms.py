@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pywikibot
 import requests
+import time
 # import json
 from operator import itemgetter
 from extract_init import ExtractHelper
@@ -44,7 +45,7 @@ def isArticle(page):
     #          "Concordance","Rhymes","Transwiki","Thesaurus","Citations","Sign gloss","Reconstruction", ]
     # for name in names:
     #     if title.startswith(name+":"):
-    #         return false
+    #         return false 
     # return true
 
 
@@ -54,8 +55,236 @@ ws = wb.active
 dToE = DicToExcel(wb, ws)
 crow = 5
 
+def makeNetworkReq(req):
+    try:
+        return requests.get(req)
+    except:
+        print("sleep .... 30 sec")
+        time.sleep(30)
+        return requests.get(req)
 
 def getArticlesData(pagesList):
+
+    # fp =  open('test.json', 'w')
+    sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
+    for page in pagesList:
+        title = page.title()
+        print(title)
+        if isArticle(page):
+            # print(title)
+            # sectionsJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=sections&page={}&format=json".format(title))
+            sectionsJson = makeNetworkReq("https://en.wiktionary.org/w/api.php?action=parse&prop=sections&page={}&format=json".format(title))
+            sectionsDict = sectionsJson.json()
+            secIndex, secNum = getSecInfo(sectionsDict,"Moroccan Arabic") 
+            
+            # print("isEty1: " + str(isEty1))
+
+            if secNum != "-1.0":
+                allSections = getAllSect(sectionsDict, secNum)
+                # print("secIndex " + secIndex + " / secNumber " + secNum)
+                # mainSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
+                mainSectJson = makeNetworkReq("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
+                mainSectionText = mainSectJson.json()
+                # print(mainSectionText["parse"]["wikitext"]["*"])
+                isEty1 = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "Etymology 1") 
+                isEty = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "=Etymology=")
+
+                sectionDic = {}
+                # [title, depth, dictionary]
+                dicList = []
+
+                depth2title = ""
+                depth3title = ""
+                depth4title = ""
+ 
+                if isEty1:
+                    secDepth = 2
+                    sortN = 1
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        # selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        selectedSectJson = makeNetworkReq("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        # secDepth = num.count('.') + 1 
+                        
+                        
+                        # print(secTitle)
+                        # print(secTxt)
+                        # print(secTitle)
+                        if "Etymology 1" == secTitle:
+                            secDepth = 2
+                            sortN = 1
+                        elif secTitle == "Etymology 2":
+                            secDepth = 2
+                            sortN = 2
+                        elif "Etymology" in secTitle:
+                            break
+                        else:
+                            secDepth = 3
+                        # depth5title = ""
+
+                        for sectName in sectNames: 
+                            if sectName in secTitle:
+                                secN = sectName
+                                if secDepth == 2:
+                                    secN = secTitle
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                sectList = [secN,sortN, secDepth, sectDic]
+                                dicList.append(sectList)
+                                break
+
+                    sortedDicList = sorted(dicList, key=itemgetter(1,2)) 
+                    # print(sortedDicList) 
+                    # dicList = []
+                    for dic in sortedDicList:
+                        secDepth = dic[2]
+                        secTitle = dic[0]
+                        sectDic = dic[3]
+                        if secDepth == 2:
+                            depth2title = secTitle
+                            sectionDic[secTitle] = sectDic
+                        elif secDepth == 3: 
+                            depth3title = secTitle
+                            sectionDic[depth2title][secTitle] = sectDic
+                        elif secDepth == 4:
+                            depth4title = secTitle
+                            sectionDic[depth2title][depth3title][secTitle] = sectDic
+                        elif secDepth == 5:
+                            sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+
+                elif not isEty:
+                    # secDepth = 2
+                    sectList = ["Etymology 1", 2, {}]
+                    dicList.append(sectList)
+                    secDepth = 3
+
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        # selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        selectedSectJson = makeNetworkReq("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        # secDepth = num.count('.') + 1 
+                        
+                        
+                        # if secTitle not in sectNames[0]:
+                            # secDepth = 3
+
+                        # secDepth+=1
+
+                        for sectName in sectNames: 
+                            if sectName in secTitle:
+                                secN = sectName
+                                if secDepth == 2:
+                                    secN = secTitle
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                sectList = [secN, secDepth, sectDic]
+                                dicList.append(sectList)
+                                break
+
+                    sortedDicList = sorted(dicList, key=itemgetter(1)) 
+                    # print(sortedDicList) 
+                    # dicList = []
+                    for dic in sortedDicList:
+                        secDepth = dic[1]
+                        secTitle = dic[0]
+                        sectDic = dic[2]
+                        if secDepth == 2:
+                            depth2title = secTitle
+                            sectionDic[secTitle] = sectDic
+                        elif secDepth == 3: 
+                            depth3title = secTitle
+                            sectionDic[depth2title][secTitle] = sectDic
+                        elif secDepth == 4:
+                            depth4title = secTitle
+                            sectionDic[depth2title][depth3title][secTitle] = sectDic
+                        elif secDepth == 5:
+                            sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+
+                elif not isEty1:
+                    secDepth = 2
+                    for num, index in allSections.items():
+                        # print(num,index)
+                        # selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        selectedSectJson = makeNetworkReq("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
+                        sectionText = selectedSectJson.json()
+                        secTxt = sectionText["parse"]["wikitext"]["*"]
+                        secTitle = secTxt.splitlines()[0].replace('=', '')
+                        # secDepth = len(num.strip().replace('.', ''))
+                        # secDepth = num.count('.') + 1 
+                        
+                        # print(secTitle)
+                        # print(secTxt)
+                        
+                        # depth5title = ""
+
+                          
+                        if sectNames[0] in secTitle:
+                            secTitle = "Etymology 1"
+                            secDepth = 2
+                        else:
+                            secDepth = 3
+
+                        for sectName in sectNames: 
+                            if sectName in secTitle:
+                                secN = sectName
+                                if secDepth == 2:
+                                    secN = secTitle
+                                sectDic = extH.getSectContent(sectName, secTxt)
+                                sectList = [secN, secDepth, sectDic]
+                                dicList.append(sectList)
+                                break
+
+                    sortedDicList = sorted(dicList, key=itemgetter(1)) 
+                    # print(sortedDicList) 
+                    # dicList = []
+                    for dic in sortedDicList:
+                        secDepth = dic[1]
+                        secTitle = dic[0]
+                        sectDic = dic[2]
+                        if secDepth == 2:
+                            depth2title = secTitle
+                            sectionDic[secTitle] = sectDic
+                        elif secDepth == 3: 
+                            depth3title = secTitle
+                            sectionDic[depth2title][secTitle] = sectDic
+                        elif secDepth == 4:
+                            depth4title = secTitle
+                            sectionDic[depth2title][depth3title][secTitle] = sectDic
+                        elif secDepth == 5:
+                            sectionDic[depth2title][depth3title][depth4title][secTitle] = sectDic
+
+
+
+                if (len(sectionDic) > 2):
+                    # print("Iam here above 2")
+                    wordDict = {title: {"Etymology 1":sectionDic["Etymology 1"], "Etymology 2":sectionDic["Etymology 2"]}}
+                else: 
+                    wordDict = {title:sectionDic}
+                # print(wordDict)
+                global crow
+                crow+=1
+                ws.cell(row=crow, column=1).value = title
+                dToE.insertCell(wordDict[title], crow, 1)
+
+                # print(wordDict)
+                # json.dump(wordDict, fp, indent=4)
+                # fp.write(',\n')
+                    # json.dump(wordDict, fp, indent=4)
+
+                
+
+
+                    # print(secTitle)
+                    # print(num.count("."))
+    # print(dToE.rangesDict)
+
+def getArticlesData2(pagesList):
 
     # fp =  open('test.json', 'w')
     sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
@@ -71,7 +300,7 @@ def getArticlesData(pagesList):
             # print("secIndex " + secIndex + " / secNumber " + secNum)
             mainSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
             mainSectionText = mainSectJson.json()
-            print(mainSectionText["parse"]["wikitext"]["*"])
+            # print(mainSectionText["parse"]["wikitext"]["*"])
             isEty1 = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "Etymology 1") 
             isEty = isEty1InSec(mainSectionText["parse"]["wikitext"]["*"], "=Etymology=") 
             # print("isEty1: " + str(isEty1))
@@ -279,7 +508,10 @@ def getArticlesData(pagesList):
 
 
 
-                wordDict = {title:sectionDic}
+                if (len(sectionDic) > 2):
+                    wordDict = {title: {"Etymology 1":sectionDic["Etymology 1"], "Etymology 2":sectionDic["Etymology 2"]}}
+                else: 
+                    wordDict = {title:sectionDic}
                 print(wordDict)
                 global crow
                 crow+=1
@@ -296,7 +528,7 @@ def getArticlesData(pagesList):
 
                     # print(secTitle)
                     # print(num.count("."))
-    print(dToE.rangesDict)
+    # print(dToE.rangesDict)
 
 def extractCatName(cat):
     title = cat
@@ -311,17 +543,19 @@ def main (catName = "Moroccan Arabic language"):
     if  pagesCount >= 1:
         getArticlesData(list(cat.articles()))
 
-    # if subcatsCount >=1:
-    #     catList = list(cat.subcategories())
-    #     for category in catList:
-    #         name = extractCatName(category.title())
-    #         main(name)
+    if subcatsCount >=1:
+        catList = list(cat.subcategories())
+        for category in catList:
+            name = extractCatName(category.title())
+            main(name)
 
 # main("Moroccan Arabic interjections")
-main("Moroccan Arabic lemmas")
+# main("Moroccan Arabic lemmas")
+main("Moroccan Arabic non-lemma forms")
+#Moroccan Arabic prepositions
 
-# dToE.mergeRanges()
-dToE.saveExcel()
+# main()
+dToE.saveExcel("Moroccan_Arabic_non-lemma_forms.xlsx")
 
 
 # myreg()

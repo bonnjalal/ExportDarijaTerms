@@ -77,13 +77,13 @@ class PronuncReg:
 
   def getAudio(self, txt):
     types = ["ogg", "mp3", "wav", "flac", "mid"]
-    audiosDic = {"Audio":{}}
-    items = {}
+    audiosDic = {"Audios":[]}
+    # items = {}
+    items = []
     for t in types:
-        if len(items) >=2:
-                  break
+        # if len(items) >=2:
+                  # break
 
-    
         audioPattern = r'(?<='+lng+r'\|)(.*?)(?=.'+t+r'\|)'
         lngPattern = r'(?<=.'+t+r'\|)(.*?)(?=}})'
  
@@ -91,16 +91,19 @@ class PronuncReg:
         # print(matchList)
         if len(matchList) > 0:
             for i in range(len(matchList)):
-                if len(items) >=2:
-                  break
+                # if len(items) >=2:
+                  # break
                 # audioLng = re.findall(lngPattern, matchList[i][2])
                 # item = {audioLng[0]: matchList[i][0] + '.' + t}
-                item = {len(items)+1: matchList[i][0] + '.' + t}
-                # print("audio" + str(item))
-                items.update(item)
+                # item = {len(items)+1: matchList[i][0] + '.' + t}
+                item = matchList[i][0] + '.' + t
+                items.append(item)
 
-    print(items)
-    audiosDic.update({"Audio":items})
+                # print("audio" + str(item))
+                # items.update(item)
+
+    # print(items)
+    audiosDic.update({"Audios":items})
 
 
     return audiosDic
@@ -141,6 +144,6 @@ text = '''* {{a|RP}} {{IPA|en|/stɔːm/}}
   * {{audio|en|En-us-storm.mp3|Audio (US)}}
   '''
 
-myreg = PronuncReg()
-result = myreg.extractPronunciation(text)
-print(result)
+# myreg = PronuncReg()
+# result = myreg.extractPronunciation(text)
+# print(result)
