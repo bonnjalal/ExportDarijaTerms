@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+import os
 import pywikibot
 import requests
 import time
+import csv
 # import json
 from operator import itemgetter
 from extract_init import ExtractHelper
@@ -558,6 +560,21 @@ main("Moroccan Arabic non-lemma forms")
 dToE.saveExcel("Moroccan_Arabic_non-lemma_forms.xlsx")
 
 
+with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
+    reader = csv.reader(inf)
+    writer = csv.writer(outf)
+    next(reader) # skip the header row
+    csvList = ['Title', 'ArticlesCount','isExtracted']
+    writer.writerow(csvList)
+    for line in reader:
+        if int(line[1]) >= 10 and line[2] != 'True':
+            main(line[0])
+            writer.writerow([line[0], line[1], 'True'])
+        else:
+            writer.writerow(line)
+
+os.remove('CategoryList.csv')
+os.rename('CategoryList_tmp.csv', 'CategoryList.csv')
 # myreg()
 
 
