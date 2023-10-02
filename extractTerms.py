@@ -52,10 +52,10 @@ def isArticle(page):
 
 
 
-wb = Workbook()  
-ws = wb.active
-dToE = DicToExcel(wb, ws)
-crow = 5
+# wb = Workbook()  
+# ws = wb.active
+# dToE = DicToExcel(wb, ws)
+# crow = 5
 
 def makeNetworkReq(req):
     try:
@@ -65,7 +65,7 @@ def makeNetworkReq(req):
         time.sleep(30)
         return requests.get(req)
 
-def getArticlesData(pagesList):
+def getArticlesData(pagesList, dToE, crow):
 
     # fp =  open('test.json', 'w')
     sectNames = ["Etymology", "Pronunciation", "Verb", "Noun", "Adverb", "Adjective", "Pronoun", "Synonyms", "Alternative forms"]
@@ -269,7 +269,7 @@ def getArticlesData(pagesList):
                 else: 
                     wordDict = {title:sectionDic}
                 # print(wordDict)
-                global crow
+                # global crow
                 crow+=1
                 ws.cell(row=crow, column=1).value = title
                 dToE.insertCell(wordDict[title], crow, 1)
@@ -536,28 +536,28 @@ def extractCatName(cat):
     title = cat
     return title.replace("Category:", "")
 
-def main (catName = "Moroccan Arabic language"):
+def main (dicExcel, crow, catName = "Moroccan Arabic language"):
     cat = pywikibot.Category(site, catName)
     catInfo = cat.categoryinfo
     pagesCount = catInfo["pages"]
     subcatsCount = catInfo["subcats"]
     print(pagesCount)
     if  pagesCount >= 1:
-        getArticlesData(list(cat.articles()))
+        getArticlesData(list(cat.articles()), dicExcel, crow)
 
-    if subcatsCount >=1:
-        catList = list(cat.subcategories())
-        for category in catList:
-            name = extractCatName(category.title())
-            main(name)
+    # if subcatsCount >=1:
+    #     catList = list(cat.subcategories())
+    #     for category in catList:
+    #         name = extractCatName(category.title())
+    #         main(name)
 
 # main("Moroccan Arabic interjections")
 # main("Moroccan Arabic lemmas")
-main("Moroccan Arabic non-lemma forms")
+# main("Moroccan Arabic non-lemma forms")
 #Moroccan Arabic prepositions
 
 # main()
-dToE.saveExcel("Moroccan_Arabic_non-lemma_forms.xlsx")
+# dToE.saveExcel("Moroccan_Arabic_non-lemma_forms.xlsx")
 
 
 with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
@@ -567,14 +567,32 @@ with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
     csvList = ['Title', 'ArticlesCount','isExtracted']
     writer.writerow(csvList)
     for line in reader:
-        if int(line[1]) >= 10 and line[2] != 'True':
-            main(line[0])
+        cat = pywikibot.Category(site, line[0])
+        catInfo = cat.categoryinfo
+        pagesCount = catInfo["pages"]
+
+        if pagesCount >= 20 and line[2] != 'True':
+            wb = Workbook()  
+            ws = wb.active
+            dToE = DicToExcel(wb, ws)
+            crow = 5
+            # main(dToE, crow, line[0])
+            # subcatsCount = catInfo["subcats"]
+            print(pagesCount)
+            getArticlesData(list(cat.articles()), dToE, crow)
+            name = line[0].replace(' ', '_')
+            dToE.saveExcel(name + '.xlsx')
+            dToE.closeExcel()
+
             writer.writerow([line[0], line[1], 'True'])
+            del wb
+            del ws
+            del crow
         else:
             writer.writerow(line)
 
-os.remove('CategoryList.csv')
-os.rename('CategoryList_tmp.csv', 'CategoryList.csv')
+# os.remove('CategoryList.csv')
+# os.rename('CategoryList_tmp.csv', 'CategoryList.csv')
 # myreg()
 
 

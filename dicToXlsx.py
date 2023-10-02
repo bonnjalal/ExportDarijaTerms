@@ -1,11 +1,11 @@
-import json
+# import json
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment  
 import openpyxl
 import copy
 
-with open('test.json') as json_file:
-    data = json.load(json_file)
+# with open('test.json') as json_file:
+#     data = json.load(json_file)
 
 class DicToExcel:
     # wb = Workbook()  
@@ -748,6 +748,8 @@ class DicToExcel:
 
     def saveExcel(self, title):
         self.wb.save(title)
+    def closeExcel(self):
+        self.wb.close()
 
 
 
