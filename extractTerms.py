@@ -560,101 +560,69 @@ def main (dicExcel, crow, catName = "Moroccan Arabic language"):
 # dToE.saveExcel("Moroccan_Arabic_non-lemma_forms.xlsx")
 
 
-with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
-    reader = csv.reader(inf)
-    writer = csv.writer(outf)
-    next(reader) # skip the header row
-    csvList = ['Title', 'ArticlesCount','isExtracted']
-    writer.writerow(csvList)
-    for line in reader:
-        cat = pywikibot.Category(site, line[0])
-        catInfo = cat.categoryinfo
-        pagesCount = catInfo["pages"]
-
-        if pagesCount >= 20 and line[2] != 'True':
-            wb = Workbook()  
-            ws = wb.active
-            dToE = DicToExcel(wb, ws)
-            crow = 5
-            # main(dToE, crow, line[0])
-            # subcatsCount = catInfo["subcats"]
-            print(pagesCount)
-            getArticlesData(list(cat.articles()), dToE, crow)
-            name = line[0].replace(' ', '_')
-            dToE.saveExcel(name + '.xlsx')
-            dToE.closeExcel()
-
-            writer.writerow([line[0], line[1], 'True'])
-            del wb
-            del ws
-            del crow
-        else:
-            writer.writerow(line)
+# with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
+#     reader = csv.reader(inf)
+#     writer = csv.writer(outf)
+#     next(reader) # skip the header row
+#     csvList = ['Title', 'ArticlesCount','isExtracted']
+#     writer.writerow(csvList)
+#     for line in reader:
+#         cat = pywikibot.Category(site, line[0])
+#         catInfo = cat.categoryinfo
+#         pagesCount = catInfo["pages"]
+#
+#         if pagesCount >= 20 and line[2] != 'True':
+#             wb = Workbook()  
+#             ws = wb.active
+#             dToE = DicToExcel(wb, ws)
+#             crow = 5
+#             # main(dToE, crow, line[0])
+#             # subcatsCount = catInfo["subcats"]
+#             print(pagesCount)
+#             getArticlesData(list(cat.articles()), dToE, crow)
+#             name = line[0].replace(' ', '_')
+#             dToE.saveExcel(name + '.xlsx')
+#             dToE.closeExcel()
+#
+#             writer.writerow([line[0], line[1], 'True'])
+#             del wb
+#             del ws
+#             del crow
+#         else:
+#             writer.writerow(line)
 
 # os.remove('CategoryList.csv')
 # os.rename('CategoryList_tmp.csv', 'CategoryList.csv')
 # myreg()
 
 
+with open('CategoryList.csv') as inf, open('CategoryList_tmp.csv', 'w') as outf:
+    reader = csv.reader(inf)
+    writer = csv.writer(outf)
+    next(reader) # skip the header row
+    csvList = ['Title', 'ArticlesCount','isExtracted']
+    writer.writerow(csvList)
+    wb = Workbook()  
+    ws = wb.active
+    dToE = DicToExcel(wb, ws)
+    crow = 5
 
+    for line in reader:
+        cat = pywikibot.Category(site, line[0])
+        catInfo = cat.categoryinfo
+        pagesCount = catInfo["pages"]
 
+        if pagesCount >= 0 and line[2] != 'True':
+                        # main(dToE, crow, line[0])
+            # subcatsCount = catInfo["subcats"]
+            print(pagesCount)
+            getArticlesData(list(cat.articles()), dToE, crow)
+            
+            writer.writerow([line[0], line[1], 'True'])
+        else:
+            writer.writerow(line)
 
-# site = pywikibot.Site("en", "wiktio nary")
-#user = pywikibot.User(site, "Bonnjalal00")
-#cat = pywikibot.Category(site, "Moroccan Arabic templates")
-# cat = pywikibot.Category(site, "Moroccan Arabic language")
-#mem = cat.members()
-
-#for user in range(10):
-#    print (list(allusers).get(user))
-
-# catInfo = cat.categoryinfo
-#
-# pagesCount = catInfo["pages"]
-# subcatsCount = catInfo["subcats"]
-
-
-#print(type(pagesCount))
-#print(subcatsCount)
-
-# print(pagesCount)
-# if pagesCount >= 1:
-#     getArticlesData(list(cat.articles()))
-#
-# catList = list(cat.subcategories())
-#print(catList)
-#title = list(catList[0].articles())[0].title()
-# print(title)
-#
-# sectionsJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=sections&page={}&format=json".format(title))
-# sectionsDict = sectionsJson.json()
-# secIndex, secNum = getSecInfo(sectionsDict,"Moroccan Arabic") 
-#
-# allSections = getAllSect(sectionsDict, secNum)
-#selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(secIndex,title))
-#sectionText = selectedSectJson.json()
-
-## count char in a string ##
-#string.count('.')
-
-# text = list(catList[0].articles())[0].text
-# print(sectionsDict["parse"]["sections"][17])
-
-# for num, index in allSections.items():
-#     print(num,index)
-#     selectedSectJson = requests.get("https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&section={}&page={}&format=json".format(index,title))
-#     sectionText = selectedSectJson.json()
-#     print(sectionText["parse"]["wikitext"])
-#     print(num.count("."))
-# print(allSections)
-#
-
-## convert json to xlxs (needs to convert dict to json first)
-# import  jpype     
-#   import  asposecells     
-#   jpype.startJVM() 
-#   from asposecells.api import Workbook
-#   workbook = Workbook("testData.json")
-#   workbook.save("testData.xlsx")
-#   jpype.shutdownJVM()
+    name = 'Other_categories'
+    dToE.saveExcel(name + '.xlsx')
+    dToE.closeExcel()
 

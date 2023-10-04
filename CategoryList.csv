@@ -195,8 +195,8 @@ Moroccan Arabic terms by lexical property,3,False
 Moroccan Arabic terms with multiple genders,1,True
 Moroccan Arabic terms by orthographic property,32,False
 Moroccan Arabic terms by phonemic property,11,False
-Moroccan Arabic 2-syllable words,534,False
-Moroccan Arabic 3-syllable words,1046,False
+Moroccan Arabic 2-syllable words,534,True
+Moroccan Arabic 3-syllable words,1046,True
 Moroccan Arabic 4-syllable words,239,False
 Moroccan Arabic 5-syllable words,13,False
 Moroccan Arabic terms by semantic function,2,False
@@ -217,28 +217,28 @@ Moroccan Arabic ethnic slurs,2,False
 Moroccan Arabic slang,2,False
 Moroccan Arabic terms with archaic senses,7,False
 Moroccan Arabic trademarks,1,False
-Moroccan Arabic vulgarities,1,False
+Moroccan Arabic vulgarities,1,True
 Terms derived from Moroccan Arabic,22,False
-Central Atlas Tamazight terms borrowed from Moroccan Arabic,2,False
+Central Atlas Tamazight terms borrowed from Moroccan Arabic,2,True
 Dutch terms borrowed from Moroccan Arabic,72,False
 English terms borrowed from Moroccan Arabic,8,False
-French terms borrowed from Moroccan Arabic,11,False
+French terms borrowed from Moroccan Arabic,11,True
 Hebrew terms borrowed from Moroccan Arabic,20,False
 Italian terms borrowed from Moroccan Arabic,2,False
 Ladino terms borrowed from Moroccan Arabic,1,False
 Norwegian Bokmål terms borrowed from Moroccan Arabic,1,False
-Tarifit terms borrowed from Moroccan Arabic,1,False
+Tarifit terms borrowed from Moroccan Arabic,1,True
 Tashelhit terms borrowed from Moroccan Arabic,399,False
 Catalan terms derived from Moroccan Arabic,2,False
 Catalan terms borrowed from Moroccan Arabic,3,False
-Central Atlas Tamazight terms derived from Moroccan Arabic,2,False
-Central Atlas Tamazight terms borrowed from Moroccan Arabic,75,False
+Central Atlas Tamazight terms derived from Moroccan Arabic,2,True
+Central Atlas Tamazight terms borrowed from Moroccan Arabic,75,True
 Dutch terms derived from Moroccan Arabic,72,False
 Dutch terms borrowed from Moroccan Arabic,9,False
 English terms derived from Moroccan Arabic,8,False
 English terms borrowed from Moroccan Arabic,16,False
-French terms derived from Moroccan Arabic,11,False
-French terms borrowed from Moroccan Arabic,23,False
+French terms derived from Moroccan Arabic,11,True
+French terms borrowed from Moroccan Arabic,23,True
 German terms derived from Moroccan Arabic,20,False
 Hebrew terms derived from Moroccan Arabic,1,False
 Hebrew terms borrowed from Moroccan Arabic,3,False
@@ -249,8 +249,8 @@ Ladino terms borrowed from Moroccan Arabic,1,False
 Norwegian Bokmål terms derived from Moroccan Arabic,1,False
 Norwegian Bokmål terms borrowed from Moroccan Arabic,1,False
 Portuguese terms derived from Moroccan Arabic,1,False
-Tarifit terms derived from Moroccan Arabic,1,False
-Tarifit terms borrowed from Moroccan Arabic,400,False
+Tarifit terms derived from Moroccan Arabic,1,True
+Tarifit terms borrowed from Moroccan Arabic,400,True
 Tashelhit terms derived from Moroccan Arabic,399,False
 Tashelhit terms borrowed from Moroccan Arabic,2,False
 Wolof terms derived from Moroccan Arabic,2,False
